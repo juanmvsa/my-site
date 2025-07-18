@@ -1,5 +1,5 @@
 // Language translations for the site
-const translations = {
+window.translations = {
   en: {
     // Header
     title: "Juan Vásquez",

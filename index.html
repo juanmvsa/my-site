@@ -538,14 +538,18 @@ Pyramid of Khafre
   }
   
   function applyTranslations() {
+    console.log('Applying translations for language:', currentLanguage);
+    console.log('Window translations available:', !!window.translations);
+    
     if (!window.translations) {
-      console.log('Translations not loaded yet');
+      console.error('Translations not loaded yet');
       return;
     }
     
     const currentTranslations = window.translations[currentLanguage];
+    console.log('Current translations object:', currentTranslations);
     if (!currentTranslations) {
-      console.log('No translations found for language:', currentLanguage);
+      console.error('No translations found for language:', currentLanguage);
       return;
     }
 
