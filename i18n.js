@@ -13,19 +13,24 @@ class I18n {
       this.currentLanguage = savedLang;
     }
 
+    // Wait for DOM to be ready before setting up
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', () => this.setupAfterDOM());
+    } else {
+      this.setupAfterDOM();
+    }
+  }
+
+  setupAfterDOM() {
     // Set up language toggle button
     const languageToggle = document.getElementById('language-toggle');
     if (languageToggle) {
       languageToggle.addEventListener('click', () => this.toggleLanguage());
       this.updateToggleButton();
     }
-
-    // Apply translations when DOM is ready
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', () => this.applyTranslations());
-    } else {
-      this.applyTranslations();
-    }
+    
+    // Apply initial translations
+    this.applyTranslations();
   }
 
   toggleLanguage() {
@@ -49,7 +54,10 @@ class I18n {
 
   applyTranslations() {
     const currentTranslations = this.translations[this.currentLanguage];
-    if (!currentTranslations) return;
+    if (!currentTranslations) {
+      console.log('No translations found for language:', this.currentLanguage);
+      return;
+    }
 
     // Update document language attribute
     document.documentElement.lang = this.currentLanguage;
