@@ -4,7 +4,7 @@ window.translations = {
     // Header
     title: "Juan Vásquez",
     cv: "cv",
-    updated: "Updated 15.MAYO.2025",
+    updated: "Updated 18.JUL.2025",
     
     // Navigation
     contents: "Contents",
@@ -155,7 +155,7 @@ window.translations = {
     
     // Cool software section
     coolSoftware: "COOL SOFTWARE",
-    coolSoftwareIntro: "estas son algunas herramientas geniales que uso, y que creo que vale la pena revisar si se adaptan a alguna de tus necesidades.",
+    coolSoftwareIntro: "estas son algunas herramientas que uso y que creo que vale la pena revisar si se adaptan a alguna de tus necesidades.",
     commandLine: "→ línea de comandos",
     python: "→ python",
     
