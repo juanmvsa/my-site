@@ -16,7 +16,7 @@ window.translations = {
     extra: "?",
     
     // Intro section
-    introText: `I am Juan Vásquez (he/him), a second-year PhD student in Computer Science at University of Colorado Boulder. I am being supervised by <a href="https://blast-cu.github.io/mlpacheco/">Dr. Maria L. Pacheco</a> and <a href="https://alexispalmer.github.io/">Dr. Alexis Palmer</a>.`,
+    introText: `I am Juan Vásquez (he/him), a third-year PhD student in Computer Science at the University of Colorado Boulder. I am being supervised by <a href="https://blast-cu.github.io/mlpacheco/">Dr. Maria L. Pacheco</a> and <a href="https://alexispalmer.github.io/">Dr. Alexis Palmer</a>.`,
     introText2: `I am part of <a href="https://blast-cu.github.io/">BLAST</a> and <a href="https://lecs-lab.github.io/">LECS</a>, where I am currently working on neurosymbolic approaches to NLP. Our goal is to combine symbolic rules and methods with neural architectures to take advantage of the modeling capabilities displayed by both paradigms, and create more robust, efficient and explainable NLP models.`,
     introText3: `During my master's (in AI), I worked on heteronormative language detection, and hate-speech detection in Mexican Spanish under the supervision of <a href="https://scholar.google.com/citations?user=RXWYz10AAAAJ&hl=es">Dr. Gemma Bel Enguix</a> and <a href="https://www.fciencias.unam.mx/directorio/34006">Dr. Karla Ramírez Pulido</a>.`,
     introText4: "In my free time I enjoy playing J-RPGs, watching horror films and reading contemporary Latin-American and queer literature.",
