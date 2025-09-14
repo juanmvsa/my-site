@@ -86,7 +86,7 @@ window.translations = {
     // Header
     title: "Juan Vásquez",
     cv: "cv",
-    updated: "Actualizado el 18.JUL.2025",
+    updated: "Actualizado el 13.SEPT.2025",
     
     // Navigation
     contents: "Contenidos",
@@ -98,7 +98,7 @@ window.translations = {
     extra: "?",
     
     // Intro section
-    introText: `Soy Juan Vásquez (él), estudiante de doctorado de segundo año en Ciencias de la Computación en la Universidad de Colorado Boulder en donde estoy siendo supervisado por <a href="https://blast-cu.github.io/mlpacheco/">Dra. Maria L. Pacheco</a> y <a href="https://alexispalmer.github.io/">Dra. Alexis Palmer</a>.`,
+    introText: `Soy Juan Vásquez (él), estudiante de doctorado de tercer año en Ciencias de la Computación en la Universidad de Colorado Boulder en donde estoy siendo supervisado por <a href="https://blast-cu.github.io/mlpacheco/">Dra. Maria L. Pacheco</a> y <a href="https://alexispalmer.github.io/">Dra. Alexis Palmer</a>.`,
     introText2: `Soy parte de <a href="https://blast-cu.github.io/">BLAST</a> y <a href="https://lecs-lab.github.io/">LECS</a>, donde actualmente trabajo en enfoques neurosimbólicos para Procesamiento de Lenguaje Natural. Uno de nuestros objetivos es combinar reglas y métodos simbólicos con arquitecturas neuronales para aprovechar las capacidades de modelado que muestran ambos paradigmas, y así crear modelos de PLN más robustos, eficientes y explicables.`,
     introText3: `Durante mi maestría (en IA), trabajé en detección de lenguaje heteronormativo y detección de discurso de odio en español mexicano bajo la supervisión de <a href="https://scholar.google.com/citations?user=RXWYz10AAAAJ&hl=es">Dra. Gemma Bel Enguix</a> y <a href="https://www.fciencias.unam.mx/directorio/34006">Dra. Karla Ramírez Pulido</a>.`,
     introText4: "En mi tiempo libre disfruto jugando J-RPGs, viendo películas de terror y leyendo literatura contemporánea latinoamericana y queer.",
@@ -134,7 +134,7 @@ window.translations = {
     
     // Extra section
     researchers: "INVESTIGADORXS",
-    researchersIntro: "Estos son algunxs investigadorxs cuyo trabajo sigo de cerca y que encuentro muy interesante. Checa su trabajo si quieres aprender más sobre varias áreas en Ciencias de la Computación :)",
+    researchersIntro: "Estxs son algunxs investigadorxs cuyo trabajo sigo de cerca y que encuentro muy interesante. Checa su trabajo si quieres aprender más sobre varias áreas en Ciencias de la Computación :)",
     
     // Research areas
     compAnalConv: "→ análisis computacional de conversaciones",
