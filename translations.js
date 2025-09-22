@@ -3,8 +3,9 @@ window.translations = {
   en: {
     // Header
     title: "Juan Vásquez",
-    cv: "cv",
-    updated: "Updated 18.JUL.2025",
+    cv: "academic cv",
+    resume: "professional résumé"
+    updated: "Updated 22.SEPT.2025",
     
     // Navigation
     contents: "Contents",
@@ -85,8 +86,9 @@ window.translations = {
   es: {
     // Header
     title: "Juan Vásquez",
-    cv: "cv",
-    updated: "Actualizado el 13.SEPT.2025",
+    cv: "cv académico",
+    resume: "résumé professional" 
+    updated: "Actualizado el 22.SEPT.2025",
     
     // Navigation
     contents: "Contenidos",
