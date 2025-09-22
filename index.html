@@ -13,17 +13,21 @@
 
 <table class="header">
         <tr>
-            <td colspan="2" class="width-auto">
+            <td rowspan="2" class="width-auto">
                 <h1 class="title" data-translate="title">Juan Vásquez</h1>
                 <!-- Link to Open in a New Tab -->
                 <a href="files/academic_cv_march_2025.pdf" target="_blank" data-translate="cv">academic cv</a>
                 <a href="files/resume_sept_2025.pdf" target="_blank" data-translate="resume">professional résumé</a>
             </td>
-            <th>
-                <span data-translate="updated">Updated 22.SEPT.2025</span>
-                <button id="language-toggle" style="background: none; border: 1px none; cursor: pointer; font-family: inherit; font-size: 0.8em; float: right; margin-top: 0.2em;">
+            <th style="text-align: right; vertical-align: top;">
+                <button id="language-toggle" style="background: none; border: 1px none; cursor: pointer; font-family: inherit; font-size: 0.8em;">
                     ES
                 </button>
+            </th>
+        </tr>
+        <tr>
+            <th style="text-align: right; vertical-align: bottom;">
+                <span data-translate="updated">Updated 22.SEPT.2025</span>
             </th>
         </tr>
     </table>
@@ -622,7 +626,9 @@ Pyramid of Khafre
   }
   
   function toggleLanguage() {
+    console.log('Toggle language clicked, current:', currentLanguage);
     currentLanguage = currentLanguage === 'en' ? 'es' : 'en';
+    console.log('Switching to:', currentLanguage);
     localStorage.setItem('language', currentLanguage);
     applyTranslations();
   }

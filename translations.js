@@ -77,6 +77,7 @@ window.translations = {
     coolSoftwareIntro: "these are some cool tools that i use, and that i think are worth checking out if they fit any of your needs.",
     commandLine: "→ command-line",
     python: "→ python",
+    latex: "→ latex",
     
     // Footer
     forkText: "This site is a fork of",
@@ -160,6 +161,7 @@ window.translations = {
     coolSoftwareIntro: "estas son algunas herramientas que uso y que creo que vale la pena revisar si se adaptan a alguna de tus necesidades.",
     commandLine: "→ línea de comandos",
     python: "→ python",
+    latex: "→ latex",
     
     // Footer
     forkText: "Este sitio es un fork de",
