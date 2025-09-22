@@ -5,7 +5,7 @@ window.translations = {
     title: "Juan Vásquez",
     cv: "academic cv",
     resume: "professional résumé",
-    updated: "Updated 22.SEPT.2025",
+    updated: "Updated",
     
     // Navigation
     contents: "Contents",
@@ -89,7 +89,7 @@ window.translations = {
     title: "Juan Vásquez",
     cv: "cv académico",
     resume: "résumé professional",
-    updated: "Actualizado el 22.SEPT.2025",
+    updated: "Actualizado",
     
     // Navigation
     contents: "Contenidos",
