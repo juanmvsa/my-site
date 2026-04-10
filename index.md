@@ -10,18 +10,16 @@ toc-title: Contents
 
 ## Intro
 
-I am Juan Vásquez (he/him), a second-year PhD student in Computer Science at University of Colorado Boulder, and I am being supervised by Dr. Maria L. Pacheco and Dr. Alexis Palmer.
+I am Juan Vásquez (he/him), a PhD student in Computer Science at University of Colorado Boulder, where I am currently working on neurosymbolic approaches to NLP. Our goal is to combine symbolic rules and methods with neural models to take advantage of the modeling capabilities displayed by both paradigms, and create more robust, efficient and explainable NLP models.
 
-I am part of [BLAST](https://tr.ee/Smrg77IVE4) and LECS, where I am currently working on neurosymbolic approaches to NLP. Our goal is to combine symbolic rules and methods with neural models to take advantage of the modeling capabilities displayed by both paradigms, and create more robust, efficient and explainable NLP models.
+During my master's, I worked on heteronormative language detection, and hate-speech detection in Mexican Spanish under the supervision of [Dr. Gemma Bel Enguix](https://scholar.google.com/citations?user=RXWYz10AAAAJ&hl=en&oi=ao) and [Dr. Karla Ramírez Pulido](https://usoesto.com/entrevistas/karrmzpulido/).
 
-During my master's, I worked on heteronormative language detection, and hate-speech detection in Mexican Spanish under the supervision of Dr. Gemma Bel Enguix and Dr. Karla Ramírez Pulido.
-
-In 2023, I worked as a consultant for the University of Arizona. I collaborated with Dr. Javier Osorio on automatic classification of news articles related to organized crime in El Salvador, Guatemala, Honduras and Mexico.
+In 2023, I worked as a consultant for the University of Arizona. I collaborated with [Dr. Javier Osorio](https://sgpp.arizona.edu/person/javier-osorio) on automatic classification of news articles related to organized crime in El Salvador, Guatemala, Honduras and Mexico.
 
 
 ## Some more info about me
 
-In my free time I enjoy playing J-RPGs, watching horror films and reading contemporary Latin-American and queer literature.
+In my free time I enjoy playing J-RPGs, watching horror films and reading contemporary Latin-American literature, and philosophy.
 
 
 ## Contact
@@ -32,13 +30,11 @@ Also, you can find my socials here:
 * [LinkedIn](http://www.linkedin.com/in/juanmvs)
 * [GitHub](https://github.com/juanmvsa)
 * [Google Scholar](https://scholar.google.com/citations?user=d5vqb6cAAAAJ&hl=en)
-* [Bluesky](https://bsky.app/profile/juanvas.bsky.social)
 
 
 ## Publications
 
 <ul class="tree"><li><p style="margin: 0;"><strong>my_publications</strong></p>
-
 
 
 
