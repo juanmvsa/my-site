@@ -5,14 +5,12 @@ all: build/index.html build/styles build/scripts build/images build/files build/
 clean:
 	rm -rf build/
 
-build/index.html: content/index.md assets/template.html Makefile
+build/index.html: content/index.html Makefile
 	@mkdir -p build
-	pandoc --toc -s \
-		--css styles/reset.css \
-		--css styles/index.css \
-		-i content/index.md \
-		-o build/index.html \
-		--template=assets/template.html
+	sed 's|href="reset.css"|href="styles/reset.css"|g' content/index.html | \
+	sed 's|href="index.css"|href="styles/index.css"|g' | \
+	sed 's|src="translations.js"|src="scripts/translations.js"|g' | \
+	sed 's|src="index.js"|src="scripts/index.js"|g' > build/index.html
 
 build/styles: assets/styles/*.css
 	@mkdir -p build/styles
