@@ -15,6 +15,7 @@ window.translations = {
     contact: "contacto",
     acpublications: "publicaciones académicas",
     teaching: "enseñanza",
+    professionalWork: "trabajo profesional",
     otherWork: "otro trabajo",
     extra: "?",
     
