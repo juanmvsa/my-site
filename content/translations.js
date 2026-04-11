@@ -17,13 +17,13 @@ window.translations = {
     extra: "?",
     
     // Intro section
-    introText: `I am Juan Vásquez (he/him), a third-year PhD student in Computer Science at the University of Colorado Boulder. I am being supervised by <a href="https://blast-cu.github.io/mlpacheco/">Dr. Maria L. Pacheco</a> and <a href="https://alexispalmer.github.io/">Dr. Alexis Palmer</a>.`,
-    introText2: `I am part of <a href="https://blast-cu.github.io/">BLAST</a> and <a href="https://lecs-lab.github.io/">LECS</a>, where I am currently working on neurosymbolic approaches to NLP. Our goal is to combine symbolic rules and methods with neural architectures to take advantage of the modeling capabilities displayed by both paradigms, and create more robust, efficient and explainable NLP models.`,
+    introText: `I am Juan Vásquez (he/him), a Ph.D. student in Computer Science at the University of Colorado Boulder.`,
+    introText2: `I am currently working on conversational analysis following the work of <a href="https://tisjune.github.io/">Dr. Justine Zhang.</a>`,
     introText3: `During my master's (in AI), I worked on heteronormative language detection, and hate-speech detection in Mexican Spanish under the supervision of <a href="https://scholar.google.com/citations?user=RXWYz10AAAAJ&hl=es">Dr. Gemma Bel Enguix</a> and <a href="https://www.fciencias.unam.mx/directorio/34006">Dr. Karla Ramírez Pulido</a>.`,
-    introText4: "In my free time I enjoy playing J-RPGs, watching horror films and reading contemporary Latin-American and queer literature.",
-    
+    introText4: "In my free time I enjoy playing J-RPGs, watching films, and reading contemporary Latin-American literature.",
+
     // Contact section
-    contactText: "You can contact me via email at juan[at]vasqueza.com",
+    contactText: "You can contact me via email at juanmvs[at]proton.me",
     contactSocials: "Also, you can find my socials here:",
     
     // Teaching section
@@ -101,13 +101,13 @@ window.translations = {
     extra: "?",
     
     // Intro section
-    introText: `Soy Juan Vásquez (él), estudiante de doctorado de tercer año en Ciencias de la Computación en la Universidad de Colorado Boulder en donde estoy siendo supervisado por <a href="https://blast-cu.github.io/mlpacheco/">Dra. Maria L. Pacheco</a> y <a href="https://alexispalmer.github.io/">Dra. Alexis Palmer</a>.`,
-    introText2: `Soy parte de <a href="https://blast-cu.github.io/">BLAST</a> y <a href="https://lecs-lab.github.io/">LECS</a>, donde actualmente trabajo en enfoques neurosimbólicos para Procesamiento de Lenguaje Natural. Uno de nuestros objetivos es combinar reglas y métodos simbólicos con arquitecturas neuronales para aprovechar las capacidades de modelado que muestran ambos paradigmas, y así crear modelos de PLN más robustos, eficientes y explicables.`,
+    introText: `Soy Juan Vásquez (él), estudiante de doctorado en Ciencias de la Computación en la Universidad de Colorado Boulder.`,
+    introText2: `Actualmente trabajo en análisis conversacional siguiendo el trabajo de <a href="https://tisjune.github.io/">Dra. Justine Zhang.</a>`,
     introText3: `Durante mi maestría (en IA), trabajé en detección de lenguaje heteronormativo y detección de discurso de odio en español mexicano bajo la supervisión de <a href="https://scholar.google.com/citations?user=RXWYz10AAAAJ&hl=es">Dra. Gemma Bel Enguix</a> y <a href="https://www.fciencias.unam.mx/directorio/34006">Dra. Karla Ramírez Pulido</a>.`,
-    introText4: "En mi tiempo libre disfruto jugando J-RPGs, viendo películas de terror y leyendo literatura contemporánea latinoamericana y queer.",
-    
+    introText4: "En mi tiempo libre disfruto jugando J-RPGs, viendo películas y leyendo literatura contemporánea latinoamericana.",
+
     // Contact section
-    contactText: "Puedes contactarme por correo electrónico en juan[at]vasqueza.com",
+    contactText: "Puedes contactarme por correo electrónico en juanmvs[at]proton.me",
     contactSocials: "También puedes encontrar mis redes sociales aquí:",
     
     // Teaching section
