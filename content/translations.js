@@ -48,6 +48,19 @@ window.translations = {
     graduateResearcher: "Investigador de posgrado",
     conversationalAgentConsultant: "Consultor de agentes conversacionales",
 
+    // Graduate Researcher bullets
+    grBullet1: "Diseñé un pipeline de análisis de podcasts acelerado por GPU que combina transcripción WhisperX, diarización pyannote.audio y 8 modelos transformer para detección multi-etiqueta de discurso de odio, logrando 4.5x aceleración mediante optimización torch.compile y cuantización BFloat16 en GPUs NVIDIA H100/A100.",
+    grBullet2: "Construí un sistema de identificación de hablantes de 5 etapas usando spaCy NER, análisis cross-episodio y clasificación de roles basada en LLM para reemplazar automáticamente IDs de hablantes con nombres reales en más de 21 programas de podcast.",
+    grBullet3: "Implementé detección de patrones de deshumanización basada en embeddings semánticos usando sentence transformers, logrando 50-100x aceleración en GPU.",
+    grBullet4: "Desarrollé una arquitectura neurosimbólica que combina Abstract Meaning Representations (AMR) con Graph Neural Networks para análisis interpretable de clasificación de texto.",
+    grBullet5: "Procesé 11,000 documentos a través de pipelines de parsing AMR para construir conjuntos de datos de grafos semánticos para entrenamiento de GNN.",
+    grBullet6: "Evalué arquitecturas GAT, GCN y GraphSAGE en grafos derivados de AMR, estableciendo líneas base para comprensión neurosimbólica de documentos.",
+
+    // Conversational Agent Consultant bullets
+    cacBullet1: "Construí un agente conversacional impulsado por Llama3.3 que proporciona soporte confidencial 24/7 a sobrevivientes de violencia laboral, conectando usuarios con recursos legales y servicios de intervención en crisis.",
+    cacBullet2: "Diseñé e implementé un pipeline RAG logrando 100% de precisión en recuperación de fuentes y 93% de cobertura de palabras clave en consultas legales de dominio específico.",
+    cacBullet3: "Colaboré con expertos legales para curar una base de conocimiento de protocolos de apoyo a víctimas informados por trauma, alineados con marcos de justicia restaurativa.",
+
     // Other work section
     organizerRole: "Organizador",
     attendingStudent: "Estudiante asistente",
