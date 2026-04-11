@@ -80,7 +80,7 @@ window.translations = {
     coolSoftwareIntro: "estas son algunas herramientas que uso y que creo que vale la pena revisar si se adaptan a alguna de tus necesidades.",
     commandLine: "→ línea de comandos",
     python: "→ python",
-    latex: "→ latex",
+    LaTeX: "→ LaTeX",
     
     // Footer
     forkText: "Este sitio es un fork de",
