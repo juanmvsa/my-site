@@ -1,6 +1,6 @@
 .PHONY: all clean serve
 
-all: build/index.html build/styles build/scripts build/images build/files build/CNAME
+all: build/index.html build/styles build/scripts build/images build/files build/CNAME build/.nojekyll
 
 clean:
 	rm -rf build/
@@ -32,6 +32,10 @@ build/files: files/*
 build/CNAME: CNAME
 	@mkdir -p build
 	cp CNAME build/
+
+build/.nojekyll:
+	@mkdir -p build
+	touch build/.nojekyll
 
 serve: all
 	@echo "Serving site at http://localhost:8000"
