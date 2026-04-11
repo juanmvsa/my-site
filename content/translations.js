@@ -44,6 +44,10 @@ window.translations = {
     here: "aquí",
     spanish: "(en español)",
     
+    // Professional work section
+    graduateResearcher: "Investigador de posgrado",
+    conversationalAgentConsultant: "Consultor de agentes conversacionales",
+
     // Other work section
     organizerRole: "Organizador",
     attendingStudent: "Estudiante asistente",
