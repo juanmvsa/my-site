@@ -462,13 +462,16 @@ label input {
   table-layout: auto;
 }
 
+.teaching-table th,
+.teaching-table td {
+  text-align: center;
+}
+
 .teaching-table th {
-  text-align: left;
   font-weight: var(--font-weight-bold);
 }
 
 .teaching-table .year-row td {
-  text-align: center;
   font-weight: var(--font-weight-bold);
   background: var(--background-color-alt);
 }

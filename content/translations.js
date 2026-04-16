@@ -71,7 +71,7 @@ window.translations = {
         grBullet6: "evalué arquitecturas GAT, GCN y GraphSAGE en grafos derivados de AMR, estableciendo líneas base para comprensión neurosimbólica de documentos.",
 
         // Conversational Agent Consultant bullets
-        cacBullet1: "construí un agente conversacional impulsado por `Llama3.3` que proporciona soporte confidencial 24/7 a sobrevivientes de violencia laboral, dando asesoría a usuarios con recursos legales y servicios de intervención en crisis.",
+        cacBullet1: "construí un agente conversacional impulsado por <code>Llama3.3</code> que proporciona soporte confidencial 24/7 a sobrevivientes de violencia laboral, dando asesoría a usuarios con recursos legales y servicios de intervención en crisis.",
         cacBullet2: "diseñé e implementé un *pipeline* con un módulo RAG (*Retrieval Augmented Generation) logrando 100% de precisión en recuperación de fuentes y 93% de cobertura de palabras clave en consultas legales de dominio específico.",
         cacBullet3: "colaboré con expertos legales para diseñar e impelementar una base de conocimiento de protocolos de apoyo a víctimas informados por trauma, alineados con marcos de justicia restaurativa.",
 
