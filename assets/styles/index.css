@@ -520,7 +520,7 @@ label input {
 
   .teaching-table tr:not(.year-row) {
     margin-bottom: var(--line-height);
-    padding: calc(var(--line-height) / 2);
+    padding: calc(var(--line-height) / 3);
     border: var(--border-thickness) solid var(--text-color);
   }
 
@@ -529,7 +529,8 @@ label input {
     width: 100%;
     text-align: left;
     border: none;
-    padding: calc(var(--line-height) / 4) 0;
+    padding: calc(var(--line-height) / 8) 0;
+    line-height: calc(var(--line-height) * 0.9);
   }
 
   .teaching-table tr:not(.year-row) td:nth-child(1):before {
