@@ -488,3 +488,43 @@ label input {
 .teaching-table .multi-line > div + div {
   margin-top: calc(var(--line-height) / 2);
 }
+
+/* Mobile optimization for teaching table */
+@media screen and (max-width: 768px) {
+  .teaching-table {
+    font-size: 0.7rem;
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .teaching-table thead,
+  .teaching-table tbody,
+  .teaching-table tr {
+    display: table;
+    display: table-row-group;
+    display: table-row;
+  }
+
+  .teaching-table th,
+  .teaching-table td {
+    white-space: normal;
+    min-width: 15ch;
+  }
+
+  .teaching-table th:first-child,
+  .teaching-table td:first-child {
+    min-width: 25ch;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .teaching-table {
+    font-size: 0.65rem;
+  }
+
+  .teaching-table th,
+  .teaching-table td {
+    padding: calc(var(--line-height) / 4) 0.5ch;
+  }
+}
