@@ -24,7 +24,7 @@ window.translations = {
         introText: `soy Juan Vásquez, estudiante de doctorado en Ciencias de la Computación en la Universidad de Colorado Boulder.`,
         introText2: `mi área de especialización es Procesamiento del Lenguaje Natural (PLN) y actualmente trabajo en análisis conversacional siguiendo el trabajo de <a href="https://tisjune.github.io/">Dra. Justine Zhang.</a>`,
         introText3: `durante mi maestría (especialización en Inteligencia Artificial), trabajé en detección de lenguaje heteronormativo y detección de discurso de odio en español mexicano bajo la supervisión de <a href="https://scholar.google.com/citations?user=RXWYz10AAAAJ&hl=es">Dra. Gemma Bel Enguix</a> y <a href="https://www.fciencias.unam.mx/directorio/34006">Dra. Karla Ramírez Pulido</a>.`,
-        introText4: "en mi tiempo libre me gusta jugar J-RPGs, ver películas y leer literatura latinoamericana contemporánea.",
+        introText4: "en mi tiempo libre me gusta jugar j-rpgs, ver cine y leer literatura latinoamericana contemporánea.",
 
         // Contact section
         contactText: "puedes contactarme por correo electrónico en juanmvs[at]pm.me",
