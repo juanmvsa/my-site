@@ -563,6 +563,7 @@
     // Update document language attribute
     document.documentElement.lang = currentLanguage;
 
+      alert("Applying " + currentLanguage.toUpperCase() + " translations. Found " + document.querySelectorAll("[data-translate]").length + " elements");
     if (currentLanguage === 'en') {
       // Restore original HTML content for English (from HTML file)
       document.querySelectorAll('[data-translate]').forEach(element => {
