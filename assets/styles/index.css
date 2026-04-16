@@ -455,3 +455,32 @@ label input {
 .debug-toggle-label {
   text-align: right;
 }
+
+/* Teaching Table Styles */
+.teaching-table {
+  width: 100%;
+  table-layout: auto;
+}
+
+.teaching-table th {
+  text-align: left;
+  font-weight: var(--font-weight-bold);
+}
+
+.teaching-table .year-row td {
+  text-align: center;
+  font-weight: var(--font-weight-bold);
+  background: var(--background-color-alt);
+}
+
+.teaching-table .multi-line {
+  line-height: var(--line-height);
+}
+
+.teaching-table .multi-line > div {
+  margin-top: 0;
+}
+
+.teaching-table .multi-line > div + div {
+  margin-top: calc(var(--line-height) / 2);
+}
