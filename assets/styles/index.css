@@ -459,38 +459,18 @@ label input {
 /* Teaching Table Styles */
 .teaching-table {
   width: 100%;
-  table-layout: fixed;
+  table-layout: auto;
   font-size: 0.875rem;
 }
 
 .teaching-table th,
 .teaching-table td {
   text-align: center;
+  white-space: normal;
 }
 
 .teaching-table th {
   font-weight: var(--font-weight-bold);
-}
-
-/* Column widths - Course: 40%, Place: 20%, Period: 25%, Description: 15% */
-.teaching-table th:nth-child(1),
-.teaching-table td:nth-child(1) {
-  width: 40%;
-}
-
-.teaching-table th:nth-child(2),
-.teaching-table td:nth-child(2) {
-  width: 20%;
-}
-
-.teaching-table th:nth-child(3),
-.teaching-table td:nth-child(3) {
-  width: 25%;
-}
-
-.teaching-table th:nth-child(4),
-.teaching-table td:nth-child(4) {
-  width: 15%;
 }
 
 .teaching-table .year-row td {
