@@ -573,6 +573,23 @@ label input {
     content: "Role: ";
     font-weight: var(--font-weight-bold);
   }
+
+  /* Spanish labels for mobile cards */
+  html[lang="es"] .teaching-table tr:not(.year-row) td:nth-child(1):before {
+    content: "Curso: ";
+  }
+
+  html[lang="es"] .teaching-table tr:not(.year-row) td:nth-child(2):before {
+    content: "Lugar: ";
+  }
+
+  html[lang="es"] .teaching-table tr:not(.year-row) td:nth-child(3):before {
+    content: "Periodo: ";
+  }
+
+  html[lang="es"] .teaching-table tr:not(.year-row) td:nth-child(4):before {
+    content: "Rol: ";
+  }
 }
 
 /* Bold role/achievement labels in other work section */
