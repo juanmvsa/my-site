@@ -460,6 +460,7 @@ label input {
 .teaching-table {
   width: 100%;
   table-layout: auto;
+  font-size: 0.875rem;
 }
 
 .teaching-table th,
