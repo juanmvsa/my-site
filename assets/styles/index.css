@@ -492,39 +492,63 @@ label input {
 /* Mobile optimization for teaching table */
 @media screen and (max-width: 768px) {
   .teaching-table {
-    font-size: 0.7rem;
-    display: block;
-    overflow-x: auto;
-    white-space: nowrap;
+    font-size: 0.8rem;
+    border: none;
   }
 
-  .teaching-table thead,
+  .teaching-table thead {
+    display: none;
+  }
+
+  .teaching-table,
   .teaching-table tbody,
   .teaching-table tr {
-    display: table;
-    display: table-row-group;
-    display: table-row;
+    display: block;
+    width: 100%;
   }
 
-  .teaching-table th,
-  .teaching-table td {
-    white-space: normal;
-    min-width: 15ch;
+  .teaching-table tr.year-row {
+    margin-top: var(--line-height);
   }
 
-  .teaching-table th:first-child,
-  .teaching-table td:first-child {
-    min-width: 25ch;
-  }
-}
-
-@media screen and (max-width: 480px) {
-  .teaching-table {
-    font-size: 0.65rem;
+  .teaching-table tr.year-row td {
+    display: block;
+    width: 100%;
+    text-align: center;
+    padding: calc(var(--line-height) / 2);
   }
 
-  .teaching-table th,
-  .teaching-table td {
-    padding: calc(var(--line-height) / 4) 0.5ch;
+  .teaching-table tr:not(.year-row) {
+    margin-bottom: var(--line-height);
+    padding: calc(var(--line-height) / 2);
+    border: var(--border-thickness) solid var(--text-color);
+  }
+
+  .teaching-table tr:not(.year-row) td {
+    display: block;
+    width: 100%;
+    text-align: left;
+    border: none;
+    padding: calc(var(--line-height) / 4) 0;
+  }
+
+  .teaching-table tr:not(.year-row) td:nth-child(1):before {
+    content: "Course: ";
+    font-weight: var(--font-weight-bold);
+  }
+
+  .teaching-table tr:not(.year-row) td:nth-child(2):before {
+    content: "Place: ";
+    font-weight: var(--font-weight-bold);
+  }
+
+  .teaching-table tr:not(.year-row) td:nth-child(3):before {
+    content: "Period: ";
+    font-weight: var(--font-weight-bold);
+  }
+
+  .teaching-table tr:not(.year-row) td:nth-child(4):before {
+    content: "Role: ";
+    font-weight: var(--font-weight-bold);
   }
 }
