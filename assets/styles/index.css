@@ -605,7 +605,6 @@ label input {
 }
 
 /* Bold years in professional work and other work sections */
-#professional-work ~ dl dt,
-#other-work ~ dl dt {
+dl dt {
   font-weight: var(--font-weight-bold);
 }
