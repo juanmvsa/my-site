@@ -561,6 +561,13 @@ label input {
 [data-translate="keynoteSpeaker"],
 [data-translate="guestSpeaker"],
 [data-translate="presenter"],
-[data-translate="firstPlace"] {
+[data-translate="firstPlace"],
+[data-translate="conversationalAgentConsultant"] {
+  font-weight: var(--font-weight-bold);
+}
+
+/* Bold years in professional work and other work sections */
+#professional-work + dl dt,
+#other-work + dl dt {
   font-weight: var(--font-weight-bold);
 }
