@@ -553,3 +553,14 @@ label input {
     font-weight: var(--font-weight-bold);
   }
 }
+
+/* Bold role/achievement labels in other work section */
+[data-translate="attendingStudent"],
+[data-translate="organizerRole"],
+[data-translate="programCommittee"],
+[data-translate="keynoteSpeaker"],
+[data-translate="guestSpeaker"],
+[data-translate="presenter"],
+[data-translate="firstPlace"] {
+  font-weight: var(--font-weight-bold);
+}
