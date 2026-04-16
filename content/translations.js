@@ -14,6 +14,7 @@ window.translations = {
         intro: "intro",
         contact: "contacto",
         acpublications: "publicaciones académicas",
+        my_publications: "/mis_publicaciones/",
         teaching: "enseñanza",
         professionalWork: "trabajo profesional",
         otherWork: "otro trabajo",
@@ -55,8 +56,7 @@ window.translations = {
         march_july: "marzo - julio",
         may: "mayo",
         july: "julio",
-        sept_june: "sept - junio"
-
+        sept_june: "sept - junio",
 
         // Professional work section
         graduateResearcher: "investigador de posgrado",
