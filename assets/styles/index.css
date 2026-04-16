@@ -473,6 +473,20 @@ label input {
   font-weight: var(--font-weight-bold);
 }
 
+/* Period column - no wrapping, single line */
+.teaching-table th:nth-child(3),
+.teaching-table td:nth-child(3) {
+  white-space: nowrap;
+}
+
+/* Course and Place columns - allow wrapping */
+.teaching-table th:nth-child(1),
+.teaching-table td:nth-child(1),
+.teaching-table th:nth-child(2),
+.teaching-table td:nth-child(2) {
+  white-space: normal;
+}
+
 .teaching-table .year-row td {
   font-weight: var(--font-weight-bold);
   background: var(--background-color-alt);
