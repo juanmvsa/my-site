@@ -74,8 +74,8 @@
 <hr>
 
 <h2 id="intro" data-translate="intro">Intro</h2>
-<p data-translate-html="introText"> I am Juan Vásquez (he/him), a Ph.D. student in Computer Science at the University of Colorado Boulder.</p>
-<p data-translate-html="introText2"> My specialization is in Natural Language Processing (NLP), and I am currently working on conversational analysis following the work of <a href="https://tisjune.github.io/">Dr. Justine Zhang.</p>
+<p data-translate-html="introText">I am Juan Vásquez (he/him), a Ph.D. student in Computer Science at the University of Colorado Boulder.</p>
+<p data-translate-html="introText2">My specialization is in Natural Language Processing (NLP), and I am currently working on conversational analysis following <a href="https://tisjune.github.io/">Dr. Justine Zhang</a>'s work.</p>
 <p data-translate-html="introText3">During my master's (in AI), I worked on heteronormative language detection, and hate-speech detection in Mexican Spanish under the supervision of <a href="https://scholar.google.com/citations?user=RXWYz10AAAAJ&hl=es">Dr. Gemma Bel Enguix</a> and <a href="https://www.fciencias.unam.mx/directorio/34006">Dr. Karla Ramírez Pulido</a>.</p>
 <p data-translate="introText4">In my free time I enjoy playing J-RPGs, watching films, and reading contemporary Latin-American literature.</p>
 
@@ -509,9 +509,9 @@
 
 <h4 id='command-line' data-translate="commandLine">→ command-line</h4>
 <ul>
-  <li><a href='https://espanso.org/'>espanso</a> - it allows you to define your own text completions in a custom toml file. more advance features allow you to execute shell commands by just typing whatever string you define.
+  <li><a href='https://espanso.org/'>espanso</a> - define your own system-wide text completions in a custom toml file. more advance features allow you to execute shell commands by just typing whatever string you define.
   <li><a href='https://f2.freshman.tech/'>F2</a> - a CLI tool for batch renaming files and directories quickly and safely.</li>
-  <li><a href='https://jqlang.github.io/jq/'>jq</a> - a CLI json processor.</li>
+  <li><a href='https://jqlang.github.io/jq/'>jq</a> - a CLI json processor with functional syntax. it's very cool for visualizing json objects.</li>
   <li><a href='https://github.com/Stirling-Tools/Stirling-PDF'>Stirling-PDF</a> - a locally hosted app with tons of features for modifying editing, and exporting PDFs.</li>
   <li><a href='https://typst.app/'>typst</a> - a markup-based typsetting language designed to resolve LaTeX ambiguities, and with a simpler syntax.</li>
 </ul>
@@ -640,8 +640,8 @@
     // Update button text
     const toggleButton = document.getElementById('language-toggle');
     if (toggleButton) {
-      toggleButton.textContent = currentLanguage === 'en' ? 'ES' : 'EN';
-      toggleButton.title = currentLanguage === 'en' ? 'Cambiar a Español' : 'Switch to English';
+      toggleButton.textContent = currentLanguage === 'en' ? 'ES' : 'US';
+      toggleButton.title = currentLanguage === 'en' ? 'Cambiar a Español' : 'Switch to English (US)';
     }
   }
 
