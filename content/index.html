@@ -23,7 +23,7 @@
             <td style="text-align: right; vertical-align: top; width: 1%; white-space: nowrap;">
                 <span data-translate="updated" style="text-transform: uppercase; font-weight: bold; display: block; margin: 0;">Updated</span>
                 <span style="display: block; margin: 0;">10.APR.2025</span>
-                <button id="language-toggle" style="background: none; border: none; cursor: pointer; font-family: inherit; font-size: 0.8em; display: block; margin: 0; padding: 0; text-align: right; line-height: 1; float: right;">
+                <button id="language-toggle" onclick="window.toggleLanguage && window.toggleLanguage()" style="background: none; border: none; cursor: pointer; font-family: inherit; font-size: 0.8em; display: block; margin: 0; padding: 0; text-align: right; line-height: 1; float: right;">
                     ES
                 </button>
             </td>
@@ -547,8 +547,11 @@
 
 <script src="index.js"></script>
 <script>
+  console.log('Language toggle script loading...');
+
   // Language switching with HTML as English source of truth
   let currentLanguage = localStorage.getItem('language') || 'en';
+  console.log('Initial language:', currentLanguage);
 
   // Store original HTML content for English (single source of truth)
   const originalHtmlContent = new Map();
@@ -652,6 +655,9 @@
     localStorage.setItem('language', currentLanguage);
     applyTranslations();
   }
+
+  // Make toggleLanguage globally accessible
+  window.toggleLanguage = toggleLanguage;
 
   // Initialize function
   function initializeLanguageToggle() {
