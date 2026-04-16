@@ -2,7 +2,7 @@
 
 Personal academic website built with a monospace design aesthetic, featuring automatic deployment via GitHub Actions.
 
-**Live Site:** https://juanmvsa.github.io/my-site
+**Live Site:** https://juan-vasquez.com (also available at https://juanmvsa.github.io/my-site)
 
 ## Project Structure
 
@@ -28,6 +28,8 @@ my_site/
 ├── files/               # Static files (PDFs, certificates)
 │   ├── academic_cv_march_2025.pdf
 │   ├── cv_march_2025.pdf
+│   ├── resume_en_friday_10_april_2026.pdf
+│   ├── resume_es_friday_10_april_2026.pdf
 │   ├── resume_sept_2025.pdf
 │   └── certificates/
 │
@@ -115,22 +117,24 @@ The main website content is in `content/index.html`. This is the source file tha
 
 ### Update Translations
 
-To modify English/Spanish translations, edit `content/translations.js`:
+The site supports English and Spanish:
+- **English content** is in `content/index.html` (source of truth)
+- **Spanish translations** are in `content/translations.js`
+
+To modify Spanish translations, edit `content/translations.js`:
 
 ```javascript
-const translations = {
-  en: {
-    title: "Juan Vásquez",
-    intro: "Intro",
-    // ... more translations
-  },
+window.translations = {
   es: {
     title: "Juan Vásquez",
-    intro: "Introducción",
+    intro: "intro",
+    introText: "soy Juan Vásquez, estudiante de doctorado...",
     // ... more translations
   }
 };
 ```
+
+To modify English content, edit the HTML directly in `content/index.html`.
 
 ### Update PDFs/CVs
 
@@ -177,9 +181,9 @@ git push origin main
 ```
 
 The GitHub Actions workflow (`.github/workflows/deploy.yml`) will:
-1. Build the site using Nix and Make
+1. Build the site using Make
 2. Deploy to GitHub Pages
-3. Update your live site at https://juanmvsa.github.io/my-site
+3. Update your live site at https://juan-vasquez.com
 
 ### Manual Deployment
 
