@@ -622,11 +622,15 @@
   }
 
   function toggleLanguage() {
+    alert('toggleLanguage called! Current: ' + currentLanguage);
     console.log('Toggle language clicked, current:', currentLanguage);
     currentLanguage = currentLanguage === 'en' ? 'es' : 'en';
     console.log('Switching to:', currentLanguage);
+    alert('Switched to: ' + currentLanguage);
     localStorage.setItem('language', currentLanguage);
+    alert('About to apply translations. window.translations exists: ' + !!window.translations);
     applyTranslations();
+    alert('applyTranslations completed');
   }
 
   // Make toggleLanguage globally accessible
