@@ -81,6 +81,121 @@ adjustMediaPadding();
 window.addEventListener("load", adjustMediaPadding);
 window.addEventListener("resize", adjustMediaPadding);
 
+function drawProfessionalWorkEdges() {
+  const tree = document.querySelector(".professional-work-tree");
+  if (!tree) return;
+
+  const root = tree.querySelector(".professional-work-tree__node--root");
+  const leaves = Array.from(tree.querySelectorAll(".professional-work-tree__node--leaf"));
+  const edgesSvg = tree.querySelector(".professional-work-tree__edges");
+  const edgeLayer = tree.querySelector(".professional-work-tree__edge-layer");
+
+  if (!root || leaves.length < 3 || !edgesSvg || !edgeLayer) return;
+
+  const treeRect = tree.getBoundingClientRect();
+  if (treeRect.width === 0 || treeRect.height === 0) return;
+
+  const rootRect = root.getBoundingClientRect();
+  const leafRects = leaves.map((leaf) => ({ leaf, rect: leaf.getBoundingClientRect() }));
+
+  const sortedByTop = [...leafRects].sort(
+    (a, b) => (a.rect.top + a.rect.height / 2) - (b.rect.top + b.rect.height / 2),
+  );
+
+  if (sortedByTop.length < 3) return;
+
+  const levelOneNode = sortedByTop[0];
+  const levelTwoNodes = sortedByTop
+    .slice(1)
+    .sort((a, b) => (a.rect.left + a.rect.width / 2) - (b.rect.left + b.rect.width / 2));
+
+  if (levelTwoNodes.length < 2) return;
+
+  const leftNode = levelTwoNodes[0];
+  const rightNode = levelTwoNodes[1];
+
+  const relativeX = (rect, horizontalAnchor) =>
+    rect.left - treeRect.left + rect.width * horizontalAnchor;
+  const relativeY = (rect, verticalAnchor) =>
+    rect.top - treeRect.top + rect.height * verticalAnchor;
+
+  const rootCenterX = relativeX(rootRect, 0.5);
+  const rootCenterY = relativeY(rootRect, 0.5);
+  const rootRadiusX = rootRect.width / 2;
+  const rootRadiusY = rootRect.height / 2;
+
+  const centerEndX = relativeX(levelOneNode.rect, 0.5);
+  const centerEndY = relativeY(levelOneNode.rect, 0) + 1;
+
+  const leftEndX = relativeX(leftNode.rect, 0.5);
+  const leftEndY = relativeY(leftNode.rect, 0) + 1;
+
+  const rightEndX = relativeX(rightNode.rect, 0.5);
+  const rightEndY = relativeY(rightNode.rect, 0) + 1;
+
+  const rootBoundaryPoint = (targetX, targetY) => {
+    const deltaX = targetX - rootCenterX;
+    const deltaY = targetY - rootCenterY;
+    const denominator =
+      Math.sqrt(
+        (deltaX * deltaX) / (rootRadiusX * rootRadiusX) +
+          (deltaY * deltaY) / (rootRadiusY * rootRadiusY),
+      ) || 1;
+    const scale = 1 / denominator;
+
+    return {
+      x: rootCenterX + deltaX * scale,
+      y: rootCenterY + deltaY * scale,
+    };
+  };
+
+  const centerStart = rootBoundaryPoint(centerEndX, centerEndY);
+  const leftStart = rootBoundaryPoint(leftEndX, leftEndY);
+  const rightStart = rootBoundaryPoint(rightEndX, rightEndY);
+
+  edgesSvg.setAttribute("viewBox", `0 0 ${treeRect.width} ${treeRect.height}`);
+  edgeLayer.replaceChildren();
+
+  const svgNamespace = "http://www.w3.org/2000/svg";
+  const appendPath = (pathData) => {
+    const path = document.createElementNS(svgNamespace, "path");
+    path.setAttribute("class", "professional-work-tree__edge-path");
+    path.setAttribute("d", pathData);
+    path.setAttribute("marker-end", "url(#professional-work-arrowhead)");
+    edgeLayer.appendChild(path);
+  };
+
+  appendPath(`M ${centerStart.x} ${centerStart.y} L ${centerEndX} ${centerEndY}`);
+  appendPath(`M ${leftStart.x} ${leftStart.y} L ${leftEndX} ${leftEndY}`);
+  appendPath(`M ${rightStart.x} ${rightStart.y} L ${rightEndX} ${rightEndY}`);
+}
+
+let professionalWorkEdgeFrame = null;
+function scheduleProfessionalWorkEdges() {
+  if (professionalWorkEdgeFrame !== null) {
+    cancelAnimationFrame(professionalWorkEdgeFrame);
+  }
+
+  professionalWorkEdgeFrame = requestAnimationFrame(() => {
+    professionalWorkEdgeFrame = null;
+    drawProfessionalWorkEdges();
+  });
+}
+
+scheduleProfessionalWorkEdges();
+window.addEventListener("load", scheduleProfessionalWorkEdges);
+window.addEventListener("resize", scheduleProfessionalWorkEdges);
+
+const professionalWorkTree = document.querySelector(".professional-work-tree");
+if (professionalWorkTree) {
+  const professionalWorkObserver = new MutationObserver(scheduleProfessionalWorkEdges);
+  professionalWorkObserver.observe(professionalWorkTree, {
+    childList: true,
+    subtree: true,
+    characterData: true,
+  });
+}
+
 function checkOffsets() {
   const ignoredTagNames = new Set([
     "THEAD",
