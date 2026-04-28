@@ -46,7 +46,7 @@ window.translations = {
         },
 
         // Institution
-        universityColoradoBoulder: "University of Colorado Boulder (Universidad de Colorado Boulder)",
+        universityColoradoBoulder: "Universidad de Colorado Boulder",
         facultadIngenieriaUNAM: "Facultad de Ingeniería, UNAM",
 
         // Course names
@@ -126,7 +126,7 @@ window.translations = {
         LaTeX: "→ LaTeX",
 
         // Tool descriptions
-        toolEspanso: "define tus propias sustituciones de strings a nivel de sistema en un archivo yml personalizado. también tiene características más avanzadas que te permiten ejecutar comandos de shell automaticamente a partir de tus archivos yml.",
+        toolEspanso: "te permite definir tus propias sustituciones de strings a nivel de sistema en un archivo yml personalizado. también tiene características más avanzadas que te permiten ejecutar comandos de shell automaticamente a partir de tus archivos yml.",
         toolF2: "herramienta para tu terminal que te permite para renombrar archivos y directorios en lote de forma rápida y segura.",
         toolJq: "un procesador de json para shell con sintaxis funcional. es muy útil para entender los contenidos de tus objetos json.",
         toolStirlingPDF: "una aplicación alojada localmente con muchas funcionalidades para modificar, editar y exportar PDFs.",
