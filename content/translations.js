@@ -47,6 +47,7 @@ window.translations = {
 
         // Institution
         universityColoradoBoulder: "University of Colorado Boulder (Universidad de Colorado Boulder)",
+        facultadIngenieriaUNAM: "Facultad de Ingeniería, UNAM",
 
         // Course names
         courseUserCenteredDesign: "CSCI 5839 - Introduction to User Centered Design (Introducción al Diseño Centrado en el Usuario)",
