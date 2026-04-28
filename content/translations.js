@@ -44,6 +44,17 @@ window.translations = {
             ta: "asistente de cátedra",
             instructor: "instructor principal"
         },
+
+        // Institution
+        universityColoradoBoulder: "University of Colorado Boulder (Universidad de Colorado Boulder)",
+
+        // Course names
+        courseUserCenteredDesign: "CSCI 5839 - Introduction to User Centered Design (Introducción al Diseño Centrado en el Usuario)",
+        courseMachineLearning: "CSCI 4622 - Machine Learning (Aprendizaje Automático)",
+        coursePrinciplesProgrammingLanguages: "CSCI 3155 - Principles of Programming Languages (Principios de Lenguajes de Programación)",
+        courseNaturalLanguageProcessing: "CSCI/LING 5832/5832 - Natural Language Processing (Procesamiento del Lenguaje Natural)",
+        courseStartingComputing: "CSCI 1300 - Starting Computing (Introducción a la Computación)",
+
         courseMaterials: "materiales creados para el curso disponibles",
         here: "aquí",
         spanish: "(en español)",
