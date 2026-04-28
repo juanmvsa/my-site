@@ -22,13 +22,13 @@ window.translations = {
 
         // Intro section
         introText: `soy Juan Vásquez, estudiante de doctorado en Ciencias de la Computación en la Universidad de Colorado Boulder.`,
-        introText2: `mi área de especialización es Procesamiento del Lenguaje Natural (PLN) y actualmente trabajo en análisis conversacional siguiendo el trabajo de <a href="https://tisjune.github.io/">Dra. Justine Zhang.</a>`,
-        introText3: `durante mi maestría (especialización en Inteligencia Artificial), trabajé en detección de lenguaje heteronormativo y detección de discurso de odio en español mexicano bajo la supervisión de <a href="https://scholar.google.com/citations?user=RXWYz10AAAAJ&hl=es">Dra. Gemma Bel Enguix</a> y <a href="https://www.fciencias.unam.mx/directorio/34006">Dra. Karla Ramírez Pulido</a>.`,
+        introText2: `mi área de especialización es Procesamiento del Lenguaje Natural (PLN) y actualmente trabajo en análisis conversacional siguiendo el trabajo de la <a href="https://tisjune.github.io/">Dra. Justine Zhang.</a>`,
+        introText3: `durante mi maestría (en Ciencias de la Computación con especialización en Inteligencia Artificial), trabajé en detección automática de lenguaje heteronormativo y discursos de odio en español mexicano bajo la supervisión de las doctoras <a href="https://scholar.google.com/citations?user=RXWYz10AAAAJ&hl=es">Gemma Bel Enguix</a> y <a href="https://www.fciencias.unam.mx/directorio/34006">Karla Ramírez Pulido</a>.`,
         introText4: "en mi tiempo libre me gusta jugar j-rpgs, ver cine y leer literatura latinoamericana contemporánea.",
 
         // Contact section
-        contactText: "puedes contactarme por correo electrónico en juanmvs[at]pm.me",
-        contactSocials: "también puedes encontrar mis redes sociales aquí:",
+        contactText: "puedes contactarme por correo electrónico en juanmvs[arroba]pm.me",
+        contactSocials: "puedes encontrar mis redes sociales aquí:",
 
         // Teaching section
         teachingHeaders: {
@@ -50,10 +50,10 @@ window.translations = {
 
         // Course names
         courseUserCenteredDesign: "CSCI 5839 - Introduction to User Centered Design (Introducción al Diseño Centrado en el Usuario)",
-        courseMachineLearning: "CSCI 4622 - Machine Learning (Aprendizaje Automático)",
+        courseMachineLearning: "CSCI 4622 - Machine Learning (Aprendizaje de Máquina)",
         coursePrinciplesProgrammingLanguages: "CSCI 3155 - Principles of Programming Languages (Principios de Lenguajes de Programación)",
         courseNaturalLanguageProcessing: "CSCI/LING 5832/5832 - Natural Language Processing (Procesamiento del Lenguaje Natural)",
-        courseStartingComputing: "CSCI 1300 - Starting Computing (Introducción a la Computación)",
+        courseStartingComputing: "CSCI 1300 - Starting Computing (Introducción a las Ciencias de la Computación)",
 
         courseMaterials: "materiales creados para el curso disponibles",
         here: "aquí",
@@ -74,7 +74,7 @@ window.translations = {
         conversationalAgentConsultant: "consultor de agentes conversacionales",
 
         // Graduate Researcher bullets
-        grBullet1: "diseñé un *pipeline* de análisis de podcasts acelerado por GPU que combina transcripción (`WhisperX`), diarización (`pyannote.audio`) y 8 modelos de lenguaje especializados en detección multi-etiqueta de discurso de odio, logrando acelearar mediante optimización torch.compile y cuantización BFloat16 en GPUs NVIDIA H100/A100.",
+        grBullet1: "diseñé un pipeline de análisis de podcasts acelerado por GPU que combina transcripción (`WhisperX`), diarización (`pyannote.audio`) y 8 modelos de lenguaje especializados en detección multi-etiqueta de discurso de odio, logrando acelearar mediante optimización torch.compile y cuantización BFloat16 en GPUs NVIDIA H100/A100.",
         grBullet2: "construí un sistema de identificación de hablantes de 5 etapas usando spaCy NER, análisis cross-episodio y clasificación de roles basada en LLM para reemplazar automáticamente IDs de hablantes con nombres reales en más de 21 programas de podcast.",
         grBullet3: "implementé detección de patrones de deshumanización basada en embeddings semánticos usando sentence transformers, logrando 50-100x aceleración en GPU.",
         grBullet4: "desarrollé una arquitectura neurosimbólica que combina Abstract Meaning Representations (AMR) con Graph Neural Networks para análisis interpretable de clasificación de texto.",
@@ -83,7 +83,7 @@ window.translations = {
 
         // Conversational Agent Consultant bullets
         cacBullet1: "construí un agente conversacional impulsado por <code>Llama3.3</code> que proporciona soporte confidencial 24/7 a sobrevivientes de violencia laboral, dando asesoría a usuarios con recursos legales y servicios de intervención en crisis.",
-        cacBullet2: "diseñé e implementé un *pipeline* con un módulo RAG (*Retrieval Augmented Generation) logrando 100% de precisión en recuperación de fuentes y 93% de cobertura de palabras clave en consultas legales de dominio específico.",
+        cacBullet2: "diseñé e implementé un pipeline con un módulo RAG (*Retrieval Augmented Generation) logrando 100% de precisión en recuperación de fuentes y 93% de cobertura de palabras clave en consultas legales de dominio específico.",
         cacBullet3: "colaboré con expertos legales para diseñar e impelementar una base de conocimiento de protocolos de apoyo a víctimas informados por trauma, alineados con marcos de justicia restaurativa.",
 
         // Other work section
@@ -123,6 +123,16 @@ window.translations = {
         commandLine: "→ línea de comandos",
         python: "→ python",
         LaTeX: "→ LaTeX",
+
+        // Tool descriptions
+        toolEspanso: "define tus propias sustituciones de strings a nivel de sistema en un archivo yml personalizado. también tiene características más avanzadas que te permiten ejecutar comandos de shell automaticamente a partir de tus archivos yml.",
+        toolF2: "herramienta para tu terminal que te permite para renombrar archivos y directorios en lote de forma rápida y segura.",
+        toolJq: "un procesador de json para shell con sintaxis funcional. es muy útil para entender los contenidos de tus objetos json.",
+        toolStirlingPDF: "una aplicación alojada localmente con muchas funcionalidades para modificar, editar y exportar PDFs.",
+        toolTypst: "un lenguaje de composición tipográfica basado en marcado diseñado para resolver las ambigüedades de LaTeX, y con una sintaxis más simple.",
+        toolUv: "un muy eficiente instalador y gestor de dependencias y versiones de python. en mi opinión, es la manera de gestionar los entornos de tus proyectos de python.",
+        toolDetexify: "una aplicación web/mac os simple que toma como entrada un dibujo a mano alzada, y devuelve el comando LaTeX equivalente.",
+        toolTectonic: "un compilador de LaTeX basado en rust.",
 
         // Footer
         forkText: "Este sitio es un fork de",
