@@ -1,0 +1,735 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1580" font-family="ui-sans-serif, system-ui, -apple-system, sans-serif">
+  <defs>
+    <!-- arrow markers, run a uses blue-slate, run b uses tropical-teal. -->
+    <marker id="arrowA" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#19647e"/>
+    </marker>
+    <marker id="arrowB" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#28afb0"/>
+    </marker>
+    <marker id="arrowSmall" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#37392e"/>
+    </marker>
+
+    <!-- card backgrounds tinted from parchment toward each run color. -->
+    <linearGradient id="cardA" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f4ecec"/>
+      <stop offset="100%" stop-color="#e1ecf0"/>
+    </linearGradient>
+    <linearGradient id="cardB" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f4ecec"/>
+      <stop offset="100%" stop-color="#daeded"/>
+    </linearGradient>
+    <linearGradient id="promptGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#eee5e5"/>
+      <stop offset="100%" stop-color="#ddcecd"/>
+    </linearGradient>
+  </defs>
+
+  <!-- canvas. -->
+  <rect width="1200" height="1580" fill="#eee5e5"/>
+
+  <!-- title block. -->
+  <text x="600" y="38" text-anchor="middle" font-size="22" font-weight="700" fill="#37392e">
+    Un prompt, dos respuestas diferentes
+  </text>
+  <text x="600" y="60" text-anchor="middle" font-size="13" fill="#37392e" opacity="0.7">
+    siguiendo la misma entrada a través de la cadena de no-determinismo de la GPU — dos veces
+  </text>
+
+  <!-- the prompt, shared origin in dust-grey. -->
+  <g>
+    <rect x="400" y="80" width="400" height="80" rx="12" fill="url(#promptGrad)" stroke="#37392e" stroke-width="2"/>
+    <text x="600" y="103" text-anchor="middle" font-size="11" font-weight="700" letter-spacing="1" fill="#37392e">EL PROMPT — enviado dos veces, temperatura = 0</text>
+    <text x="600" y="130" text-anchor="middle" font-size="15" font-weight="700" fill="#37392e" font-family="ui-monospace, monospace">"La capital de Francia es"</text>
+    <text x="600" y="150" text-anchor="middle" font-size="11" fill="#37392e" opacity="0.75">siguiente token esperado: "París"</text>
+  </g>
+
+  <!-- diverging arrows from prompt to each run. -->
+  <line x1="500" y1="160" x2="270" y2="200" stroke="#19647e" stroke-width="2.5" marker-end="url(#arrowA)"/>
+  <line x1="700" y1="160" x2="930" y2="200" stroke="#28afb0" stroke-width="2.5" marker-end="url(#arrowB)"/>
+
+  <!-- column headers. -->
+  <g>
+    <rect x="60" y="200" width="420" height="36" rx="8" fill="#19647e" stroke="#0f4a60" stroke-width="1.5"/>
+    <text x="270" y="224" text-anchor="middle" font-size="14" font-weight="700" fill="#eee5e5">EJECUCIÓN A — enviada a las 9:00:00</text>
+  </g>
+  <g>
+    <rect x="720" y="200" width="420" height="36" rx="8" fill="#28afb0" stroke="#1d8a8b" stroke-width="1.5"/>
+    <text x="930" y="224" text-anchor="middle" font-size="14" font-weight="700" fill="#37392e">EJECUCIÓN B — enviada a las 9:00:01</text>
+  </g>
+
+  <!-- ====================== STEP 1: BATCHING ====================== -->
+  <g>
+    <rect x="60" y="252" width="1080" height="26" rx="6" fill="#ddcecd" stroke="#37392e" stroke-width="0.6"/>
+    <text x="80" y="270" font-size="12" font-weight="700" fill="#37392e">PASO ①</text>
+    <text x="600" y="270" text-anchor="middle" font-size="13" font-weight="600" fill="#37392e">el servidor agrupa el prompt con quien esté en ese momento</text>
+  </g>
+
+  <g>
+    <rect x="60" y="285" width="420" height="100" rx="10" fill="url(#cardA)" stroke="#19647e" stroke-width="1.5"/>
+    <text x="270" y="305" text-anchor="middle" font-size="11" font-weight="600" fill="#19647e">momento tranquilo — solo 1 usuario más conectado</text>
+    <g transform="translate(165, 320)">
+      <rect x="0" y="0" width="100" height="22" rx="4" fill="#19647e" stroke="#0f4a60"/>
+      <text x="50" y="16" text-anchor="middle" font-size="10" font-weight="600" fill="#eee5e5">tu prompt</text>
+      <rect x="110" y="0" width="100" height="22" rx="4" fill="#a8c5d0" stroke="#19647e"/>
+      <text x="160" y="16" text-anchor="middle" font-size="10" fill="#37392e">otro usuario</text>
+    </g>
+    <text x="270" y="370" text-anchor="middle" font-size="14" font-weight="700" fill="#19647e">tamaño de lote N = 2</text>
+  </g>
+
+  <g>
+    <rect x="720" y="285" width="420" height="100" rx="10" fill="url(#cardB)" stroke="#28afb0" stroke-width="1.5"/>
+    <text x="930" y="305" text-anchor="middle" font-size="11" font-weight="600" fill="#1d8a8b">un segundo después — pico de tráfico, 31 usuarios más conectados</text>
+    <g transform="translate(723, 320)">
+      <rect x="0" y="0" width="11" height="22" rx="2" fill="#a8dcdd" stroke="#28afb0"/>
+      <rect x="13" y="0" width="11" height="22" rx="2" fill="#a8dcdd" stroke="#28afb0"/>
+      <rect x="26" y="0" width="11" height="22" rx="2" fill="#a8dcdd" stroke="#28afb0"/>
+      <rect x="39" y="0" width="11" height="22" rx="2" fill="#19647e" stroke="#0f4a60" stroke-width="1.5"/>
+      <rect x="52" y="0" width="11" height="22" rx="2" fill="#a8dcdd" stroke="#28afb0"/>
+      <rect x="65" y="0" width="11" height="22" rx="2" fill="#a8dcdd" stroke="#28afb0"/>
+      <rect x="78" y="0" width="11" height="22" rx="2" fill="#a8dcdd" stroke="#28afb0"/>
+      <rect x="91" y="0" width="11" height="22" rx="2" fill="#a8dcdd" stroke="#28afb0"/>
+      <rect x="104" y="0" width="11" height="22" rx="2" fill="#a8dcdd" stroke="#28afb0"/>
+      <rect x="117" y="0" width="11" height="22" rx="2" fill="#a8dcdd" stroke="#28afb0"/>
+      <rect x="130" y="0" width="11" height="22" rx="2" fill="#a8dcdd" stroke="#28afb0"/>
+      <rect x="143" y="0" width="11" height="22" rx="2" fill="#a8dcdd" stroke="#28afb0"/>
+      <rect x="156" y="0" width="11" height="22" rx="2" fill="#a8dcdd" stroke="#28afb0"/>
+      <rect x="169" y="0" width="11" height="22" rx="2" fill="#a8dcdd" stroke="#28afb0"/>
+      <rect x="182" y="0" width="11" height="22" rx="2" fill="#a8dcdd" stroke="#28afb0"/>
+      <rect x="195" y="0" width="11" height="22" rx="2" fill="#a8dcdd" stroke="#28afb0"/>
+      <rect x="208" y="0" width="11" height="22" rx="2" fill="#a8dcdd" stroke="#28afb0"/>
+      <rect x="221" y="0" width="11" height="22" rx="2" fill="#a8dcdd" stroke="#28afb0"/>
+      <rect x="234" y="0" width="11" height="22" rx="2" fill="#a8dcdd" stroke="#28afb0"/>
+      <rect x="247" y="0" width="11" height="22" rx="2" fill="#a8dcdd" stroke="#28afb0"/>
+      <rect x="260" y="0" width="11" height="22" rx="2" fill="#a8dcdd" stroke="#28afb0"/>
+      <rect x="273" y="0" width="11" height="22" rx="2" fill="#a8dcdd" stroke="#28afb0"/>
+      <rect x="286" y="0" width="11" height="22" rx="2" fill="#a8dcdd" stroke="#28afb0"/>
+      <rect x="299" y="0" width="11" height="22" rx="2" fill="#a8dcdd" stroke="#28afb0"/>
+      <rect x="312" y="0" width="11" height="22" rx="2" fill="#a8dcdd" stroke="#28afb0"/>
+      <rect x="325" y="0" width="11" height="22" rx="2" fill="#a8dcdd" stroke="#28afb0"/>
+      <rect x="338" y="0" width="11" height="22" rx="2" fill="#a8dcdd" stroke="#28afb0"/>
+      <rect x="351" y="0" width="11" height="22" rx="2" fill="#a8dcdd" stroke="#28afb0"/>
+      <rect x="364" y="0" width="11" height="22" rx="2" fill="#a8dcdd" stroke="#28afb0"/>
+      <rect x="377" y="0" width="11" height="22" rx="2" fill="#a8dcdd" stroke="#28afb0"/>
+      <rect x="390" y="0" width="11" height="22" rx="2" fill="#a8dcdd" stroke="#28afb0"/>
+      <rect x="403" y="0" width="11" height="22" rx="2" fill="#a8dcdd" stroke="#28afb0"/>
+      <text x="44.5" y="36" text-anchor="middle" font-size="9" font-weight="700" fill="#19647e">↑ tu prompt</text>
+    </g>
+    <text x="930" y="370" text-anchor="middle" font-size="14" font-weight="700" fill="#1d8a8b">tamaño de lote N = 32</text>
+  </g>
+
+  <line x1="270" y1="385" x2="270" y2="412" stroke="#19647e" stroke-width="2" marker-end="url(#arrowA)"/>
+  <line x1="930" y1="385" x2="930" y2="412" stroke="#28afb0" stroke-width="2" marker-end="url(#arrowB)"/>
+
+  <!-- ====================== NEW STEP: VECTORIZATION ====================== -->
+  <g>
+    <rect x="60" y="420" width="1080" height="26" rx="6" fill="#ddcecd" stroke="#37392e" stroke-width="0.6"/>
+    <text x="80" y="438" font-size="12" font-weight="700" fill="#37392e">PASO ②</text>
+    <text x="600" y="438" text-anchor="middle" font-size="13" font-weight="600" fill="#37392e">cada prompt del lote se convierte en una secuencia de vectores numéricos (embeddings)</text>
+  </g>
+
+  <!-- vectorization explanation (full width). -->
+  <g>
+    <rect x="60" y="453" width="1080" height="155" rx="10" fill="#f4ecec" stroke="#37392e" stroke-width="1"/>
+
+    <!-- title within. -->
+    <text x="600" y="473" text-anchor="middle" font-size="11" font-weight="700" fill="#37392e">tokenización → búsqueda de embeddings</text>
+
+    <!-- step a: text prompt. -->
+    <g transform="translate(85, 488)">
+      <text x="85" y="0" text-anchor="middle" font-size="9" font-weight="600" fill="#37392e">1. texto del prompt</text>
+      <rect x="0" y="6" width="170" height="22" rx="3" fill="#ddcecd" stroke="#37392e"/>
+      <text x="85" y="21" text-anchor="middle" font-size="10" fill="#37392e" font-family="ui-monospace, monospace">"La capital de Francia es"</text>
+    </g>
+
+    <!-- arrow 1. -->
+    <line x1="262" y1="505" x2="290" y2="505" stroke="#37392e" stroke-width="1.2" marker-end="url(#arrowSmall)"/>
+
+    <!-- step b: tokens. -->
+    <g transform="translate(300, 488)">
+      <text x="115" y="0" text-anchor="middle" font-size="9" font-weight="600" fill="#37392e">2. tokens (IDs del vocabulario)</text>
+      <g font-family="ui-monospace, monospace" font-size="8">
+        <rect x="0"   y="6" width="38" height="22" rx="2" fill="#ddcecd" stroke="#37392e"/>
+        <text x="19"  y="16" text-anchor="middle" fill="#37392e">"La"</text>
+        <text x="19"  y="25" text-anchor="middle" fill="#37392e" opacity="0.6">[2451]</text>
+        <rect x="40"  y="6" width="48" height="22" rx="2" fill="#ddcecd" stroke="#37392e"/>
+        <text x="64"  y="16" text-anchor="middle" fill="#37392e">"capital"</text>
+        <text x="64"  y="25" text-anchor="middle" fill="#37392e" opacity="0.6">[8330]</text>
+        <rect x="90"  y="6" width="34" height="22" rx="2" fill="#ddcecd" stroke="#37392e"/>
+        <text x="107" y="16" text-anchor="middle" fill="#37392e">"de"</text>
+        <text x="107" y="25" text-anchor="middle" fill="#37392e" opacity="0.6">[504]</text>
+        <rect x="126" y="6" width="50" height="22" rx="2" fill="#ddcecd" stroke="#37392e"/>
+        <text x="151" y="16" text-anchor="middle" fill="#37392e">"Francia"</text>
+        <text x="151" y="25" text-anchor="middle" fill="#37392e" opacity="0.6">[6712]</text>
+        <rect x="178" y="6" width="32" height="22" rx="2" fill="#ddcecd" stroke="#37392e"/>
+        <text x="194" y="16" text-anchor="middle" fill="#37392e">"es"</text>
+        <text x="194" y="25" text-anchor="middle" fill="#37392e" opacity="0.6">[91]</text>
+      </g>
+    </g>
+
+    <!-- arrow 2. -->
+    <line x1="515" y1="505" x2="543" y2="505" stroke="#37392e" stroke-width="1.2" marker-end="url(#arrowSmall)"/>
+
+    <!-- step c: embedding lookup table. -->
+    <g transform="translate(553, 478)">
+      <text x="85" y="10" text-anchor="middle" font-size="9" font-weight="600" fill="#37392e">3. tabla de embeddings (consulta)</text>
+      <rect x="0" y="16" width="170" height="78" rx="4" fill="#ddcecd" stroke="#37392e" stroke-width="1"/>
+      <g font-family="ui-monospace, monospace" font-size="7" fill="#37392e">
+        <text x="8" y="28">ID</text>
+        <text x="35" y="28">→</text>
+        <text x="48" y="28">vector de 4096 dim.</text>
+        <line x1="6" y1="32" x2="164" y2="32" stroke="#37392e" stroke-width="0.4"/>
+        <text x="8" y="42">[2451]</text>
+        <text x="35" y="42">→</text>
+        <text x="48" y="42">[0.42, -1.3, 0.08, …]</text>
+        <text x="8" y="52">[8330]</text>
+        <text x="35" y="52">→</text>
+        <text x="48" y="52">[0.91, 0.05, -0.7, …]</text>
+        <text x="8" y="62">[504]</text>
+        <text x="35" y="62">→</text>
+        <text x="48" y="62">[-0.3, 1.77, 0.42, …]</text>
+        <text x="8" y="72">[6712]</text>
+        <text x="35" y="72">→</text>
+        <text x="48" y="72">[1.05, -0.4, 2.31, …]</text>
+        <text x="8" y="82">[91]</text>
+        <text x="35" y="82">→</text>
+        <text x="48" y="82">[-0.7, 0.88, 1.23, …]</text>
+      </g>
+    </g>
+
+    <!-- arrow 3. -->
+    <line x1="725" y1="505" x2="753" y2="505" stroke="#37392e" stroke-width="1.2" marker-end="url(#arrowSmall)"/>
+
+    <!-- step d: final tensor (stack of vector rows). -->
+    <g transform="translate(763, 478)">
+      <text x="180" y="10" text-anchor="middle" font-size="9" font-weight="600" fill="#37392e">4. el lote completo se convierte en un tensor</text>
+
+      <!-- show a stack: each token of each prompt = one row of 4096 numbers. -->
+      <g transform="translate(0, 18)">
+        <!-- prompt 0 indicator. -->
+        <text x="-2" y="9" text-anchor="end" font-size="7" font-weight="700" fill="#19647e">prompt 0:</text>
+        <g font-family="ui-monospace, monospace" font-size="6">
+          <!-- row for token "La". -->
+          <rect x="6" y="2" width="340" height="11" fill="#19647e" stroke="#0f4a60" stroke-width="0.4"/>
+          <text x="14" y="10" fill="#eee5e5">"La"</text>
+          <text x="42" y="10" fill="#eee5e5">→</text>
+          <text x="72" y="10" fill="#eee5e5">0.42</text>
+          <text x="104" y="10" fill="#eee5e5">-1.3</text>
+          <text x="136" y="10" fill="#eee5e5">0.08</text>
+          <text x="168" y="10" fill="#eee5e5">2.71</text>
+          <text x="200" y="10" fill="#eee5e5">-0.5</text>
+          <text x="232" y="10" fill="#eee5e5">1.14</text>
+          <text x="264" y="10" fill="#eee5e5">-2.0</text>
+          <text x="296" y="10" fill="#eee5e5">0.33</text>
+          <text x="330" y="10" fill="#eee5e5">…</text>
+        </g>
+      </g>
+
+      <g transform="translate(0, 31)">
+        <g font-family="ui-monospace, monospace" font-size="6">
+          <rect x="6" y="2" width="340" height="11" fill="#19647e" stroke="#0f4a60" stroke-width="0.4"/>
+          <text x="14" y="10" fill="#eee5e5">"cap…"</text>
+          <text x="42" y="10" fill="#eee5e5">→</text>
+          <text x="72" y="10" fill="#eee5e5">0.91</text>
+          <text x="104" y="10" fill="#eee5e5">0.05</text>
+          <text x="136" y="10" fill="#eee5e5">-0.7</text>
+          <text x="168" y="10" fill="#eee5e5">1.62</text>
+          <text x="200" y="10" fill="#eee5e5">2.18</text>
+          <text x="232" y="10" fill="#eee5e5">-1.5</text>
+          <text x="264" y="10" fill="#eee5e5">0.04</text>
+          <text x="296" y="10" fill="#eee5e5">-0.9</text>
+          <text x="330" y="10" fill="#eee5e5">…</text>
+        </g>
+      </g>
+
+      <!-- separator between prompts. -->
+      <line x1="0" y1="48" x2="360" y2="48" stroke="#37392e" stroke-width="0.4" stroke-dasharray="2 2"/>
+
+      <g transform="translate(0, 51)">
+        <text x="-2" y="9" text-anchor="end" font-size="7" font-weight="700" fill="#28afb0">prompt 1:</text>
+        <g font-family="ui-monospace, monospace" font-size="6">
+          <rect x="6" y="2" width="340" height="11" fill="#28afb0" stroke="#1d8a8b" stroke-width="0.4"/>
+          <text x="14" y="10" fill="#37392e">"La"</text>
+          <text x="42" y="10" fill="#37392e">→</text>
+          <text x="72" y="10" fill="#37392e">0.42</text>
+          <text x="104" y="10" fill="#37392e">-1.3</text>
+          <text x="136" y="10" fill="#37392e">0.08</text>
+          <text x="168" y="10" fill="#37392e">2.71</text>
+          <text x="200" y="10" fill="#37392e">-0.5</text>
+          <text x="232" y="10" fill="#37392e">1.14</text>
+          <text x="264" y="10" fill="#37392e">-2.0</text>
+          <text x="296" y="10" fill="#37392e">0.33</text>
+          <text x="330" y="10" fill="#37392e">…</text>
+        </g>
+      </g>
+
+      <g transform="translate(0, 64)">
+        <g font-family="ui-monospace, monospace" font-size="6">
+          <rect x="6" y="2" width="340" height="11" fill="#28afb0" stroke="#1d8a8b" stroke-width="0.4"/>
+          <text x="14" y="10" fill="#37392e">"…"</text>
+          <text x="42" y="10" fill="#37392e">→</text>
+          <text x="72" y="10" fill="#37392e">0.55</text>
+          <text x="104" y="10" fill="#37392e">2.14</text>
+          <text x="136" y="10" fill="#37392e">-0.1</text>
+          <text x="168" y="10" fill="#37392e">0.77</text>
+          <text x="200" y="10" fill="#37392e">1.89</text>
+          <text x="232" y="10" fill="#37392e">-0.3</text>
+          <text x="264" y="10" fill="#37392e">2.42</text>
+          <text x="296" y="10" fill="#37392e">-1.0</text>
+          <text x="330" y="10" fill="#37392e">…</text>
+        </g>
+      </g>
+    </g>
+
+    <!-- footer note. -->
+    <text x="600" y="600" text-anchor="middle" font-size="10" font-style="italic" fill="#37392e">cada token se reemplaza por su vector de 4096 dimensiones — el lote completo termina siendo una sola matriz</text>
+  </g>
+
+  <line x1="270" y1="608" x2="270" y2="635" stroke="#19647e" stroke-width="2" marker-end="url(#arrowA)"/>
+  <line x1="930" y1="608" x2="930" y2="635" stroke="#28afb0" stroke-width="2" marker-end="url(#arrowB)"/>
+
+  <!-- ====================== STEP 3 (was 2): TENSOR SHAPES ====================== -->
+  <g>
+    <rect x="60" y="643" width="1080" height="26" rx="6" fill="#ddcecd" stroke="#37392e" stroke-width="0.6"/>
+    <text x="80" y="661" font-size="12" font-weight="700" fill="#37392e">PASO ③</text>
+    <text x="600" y="661" text-anchor="middle" font-size="13" font-weight="600" fill="#37392e">el tamaño del lote determina la forma final del tensor que llega a la GPU</text>
+  </g>
+
+  <!-- card a: tensor of shape 2x4096, shown as a grid with sample float values. -->
+  <g>
+    <rect x="60" y="676" width="420" height="130" rx="10" fill="url(#cardA)" stroke="#19647e" stroke-width="1.5"/>
+
+    <text x="78" y="701" font-size="8" font-weight="600" fill="#19647e">fila 0</text>
+    <text x="78" y="723" font-size="8" font-weight="600" fill="#19647e">fila 1</text>
+
+    <g transform="translate(115, 690)" font-family="ui-monospace, monospace" font-size="7">
+      <g fill="#19647e" stroke="#0f4a60" stroke-width="0.6">
+        <rect x="0"   y="0" width="28" height="14"/>
+        <rect x="28"  y="0" width="28" height="14"/>
+        <rect x="56"  y="0" width="28" height="14"/>
+        <rect x="84"  y="0" width="28" height="14"/>
+        <rect x="112" y="0" width="28" height="14"/>
+        <rect x="140" y="0" width="28" height="14"/>
+        <rect x="168" y="0" width="28" height="14"/>
+        <rect x="196" y="0" width="28" height="14"/>
+      </g>
+      <g fill="#eee5e5">
+        <text x="14"  y="10" text-anchor="middle">0.42</text>
+        <text x="42"  y="10" text-anchor="middle">-1.3</text>
+        <text x="70"  y="10" text-anchor="middle">0.08</text>
+        <text x="98"  y="10" text-anchor="middle">2.71</text>
+        <text x="126" y="10" text-anchor="middle">-0.5</text>
+        <text x="154" y="10" text-anchor="middle">1.14</text>
+        <text x="182" y="10" text-anchor="middle">-2.0</text>
+        <text x="210" y="10" text-anchor="middle">0.33</text>
+      </g>
+      <text x="234" y="10" text-anchor="middle" font-size="10" font-weight="700" fill="#19647e">…</text>
+
+      <g fill="#19647e" stroke="#0f4a60" stroke-width="0.6">
+        <rect x="0"   y="16" width="28" height="14"/>
+        <rect x="28"  y="16" width="28" height="14"/>
+        <rect x="56"  y="16" width="28" height="14"/>
+        <rect x="84"  y="16" width="28" height="14"/>
+        <rect x="112" y="16" width="28" height="14"/>
+        <rect x="140" y="16" width="28" height="14"/>
+        <rect x="168" y="16" width="28" height="14"/>
+        <rect x="196" y="16" width="28" height="14"/>
+      </g>
+      <g fill="#eee5e5">
+        <text x="14"  y="26" text-anchor="middle">0.91</text>
+        <text x="42"  y="26" text-anchor="middle">0.05</text>
+        <text x="70"  y="26" text-anchor="middle">-0.7</text>
+        <text x="98"  y="26" text-anchor="middle">1.62</text>
+        <text x="126" y="26" text-anchor="middle">2.18</text>
+        <text x="154" y="26" text-anchor="middle">-1.5</text>
+        <text x="182" y="26" text-anchor="middle">0.04</text>
+        <text x="210" y="26" text-anchor="middle">-0.9</text>
+      </g>
+      <text x="234" y="26" text-anchor="middle" font-size="10" font-weight="700" fill="#19647e">…</text>
+    </g>
+
+    <line x1="115" y1="745" x2="349" y2="745" stroke="#19647e" stroke-width="1"/>
+    <line x1="115" y1="742" x2="115" y2="748" stroke="#19647e" stroke-width="1"/>
+    <line x1="349" y1="742" x2="349" y2="748" stroke="#19647e" stroke-width="1"/>
+    <text x="232" y="760" text-anchor="middle" font-size="9" fill="#19647e">4096 columnas (dimensión oculta)</text>
+
+    <text x="270" y="790" text-anchor="middle" font-size="12" font-weight="700" fill="#19647e">forma: 2 × 4096  (tensor delgado)</text>
+  </g>
+
+  <!-- card b: tensor of shape 32x4096. -->
+  <g>
+    <rect x="720" y="676" width="420" height="130" rx="10" fill="url(#cardB)" stroke="#28afb0" stroke-width="1.5"/>
+
+    <text x="738" y="694" font-size="7" font-weight="600" fill="#1d8a8b">fila 0</text>
+    <text x="738" y="702" font-size="7" font-weight="600" fill="#1d8a8b">fila 1</text>
+    <text x="738" y="710" font-size="7" font-weight="600" fill="#1d8a8b">fila 2</text>
+    <text x="738" y="718" font-size="7" font-weight="600" fill="#1d8a8b">fila 3</text>
+    <text x="738" y="726" font-size="9" font-weight="700" fill="#1d8a8b">⋮</text>
+    <text x="738" y="736" font-size="7" font-weight="600" fill="#1d8a8b">fila 31</text>
+
+    <g transform="translate(775, 689)" font-family="ui-monospace, monospace" font-size="6">
+      <g fill="#28afb0" stroke="#1d8a8b" stroke-width="0.5">
+        <rect x="0"   y="0" width="28" height="7"/>
+        <rect x="28"  y="0" width="28" height="7"/>
+        <rect x="56"  y="0" width="28" height="7"/>
+        <rect x="84"  y="0" width="28" height="7"/>
+        <rect x="112" y="0" width="28" height="7"/>
+        <rect x="140" y="0" width="28" height="7"/>
+        <rect x="168" y="0" width="28" height="7"/>
+        <rect x="196" y="0" width="28" height="7"/>
+      </g>
+      <g fill="#37392e">
+        <text x="14"  y="5.5" text-anchor="middle">0.42</text>
+        <text x="42"  y="5.5" text-anchor="middle">-1.3</text>
+        <text x="70"  y="5.5" text-anchor="middle">0.08</text>
+        <text x="98"  y="5.5" text-anchor="middle">2.71</text>
+        <text x="126" y="5.5" text-anchor="middle">-0.5</text>
+        <text x="154" y="5.5" text-anchor="middle">1.14</text>
+        <text x="182" y="5.5" text-anchor="middle">-2.0</text>
+        <text x="210" y="5.5" text-anchor="middle">0.33</text>
+      </g>
+      <text x="234" y="5.5" text-anchor="middle" font-size="8" font-weight="700" fill="#1d8a8b">…</text>
+
+      <g fill="#28afb0" stroke="#1d8a8b" stroke-width="0.5">
+        <rect x="0"   y="8" width="28" height="7"/>
+        <rect x="28"  y="8" width="28" height="7"/>
+        <rect x="56"  y="8" width="28" height="7"/>
+        <rect x="84"  y="8" width="28" height="7"/>
+        <rect x="112" y="8" width="28" height="7"/>
+        <rect x="140" y="8" width="28" height="7"/>
+        <rect x="168" y="8" width="28" height="7"/>
+        <rect x="196" y="8" width="28" height="7"/>
+      </g>
+      <g fill="#37392e">
+        <text x="14"  y="13.5" text-anchor="middle">0.91</text>
+        <text x="42"  y="13.5" text-anchor="middle">0.05</text>
+        <text x="70"  y="13.5" text-anchor="middle">-0.7</text>
+        <text x="98"  y="13.5" text-anchor="middle">1.62</text>
+        <text x="126" y="13.5" text-anchor="middle">2.18</text>
+        <text x="154" y="13.5" text-anchor="middle">-1.5</text>
+        <text x="182" y="13.5" text-anchor="middle">0.04</text>
+        <text x="210" y="13.5" text-anchor="middle">-0.9</text>
+      </g>
+      <text x="234" y="13.5" text-anchor="middle" font-size="8" font-weight="700" fill="#1d8a8b">…</text>
+
+      <g fill="#28afb0" stroke="#1d8a8b" stroke-width="0.5">
+        <rect x="0"   y="16" width="28" height="7"/>
+        <rect x="28"  y="16" width="28" height="7"/>
+        <rect x="56"  y="16" width="28" height="7"/>
+        <rect x="84"  y="16" width="28" height="7"/>
+        <rect x="112" y="16" width="28" height="7"/>
+        <rect x="140" y="16" width="28" height="7"/>
+        <rect x="168" y="16" width="28" height="7"/>
+        <rect x="196" y="16" width="28" height="7"/>
+      </g>
+      <g fill="#37392e">
+        <text x="14"  y="21.5" text-anchor="middle">-0.3</text>
+        <text x="42"  y="21.5" text-anchor="middle">1.77</text>
+        <text x="70"  y="21.5" text-anchor="middle">0.42</text>
+        <text x="98"  y="21.5" text-anchor="middle">-1.1</text>
+        <text x="126" y="21.5" text-anchor="middle">0.66</text>
+        <text x="154" y="21.5" text-anchor="middle">2.05</text>
+        <text x="182" y="21.5" text-anchor="middle">-0.8</text>
+        <text x="210" y="21.5" text-anchor="middle">0.19</text>
+      </g>
+      <text x="234" y="21.5" text-anchor="middle" font-size="8" font-weight="700" fill="#1d8a8b">…</text>
+
+      <g fill="#28afb0" stroke="#1d8a8b" stroke-width="0.5">
+        <rect x="0"   y="24" width="28" height="7"/>
+        <rect x="28"  y="24" width="28" height="7"/>
+        <rect x="56"  y="24" width="28" height="7"/>
+        <rect x="84"  y="24" width="28" height="7"/>
+        <rect x="112" y="24" width="28" height="7"/>
+        <rect x="140" y="24" width="28" height="7"/>
+        <rect x="168" y="24" width="28" height="7"/>
+        <rect x="196" y="24" width="28" height="7"/>
+      </g>
+      <g fill="#37392e">
+        <text x="14"  y="29.5" text-anchor="middle">1.05</text>
+        <text x="42"  y="29.5" text-anchor="middle">-0.4</text>
+        <text x="70"  y="29.5" text-anchor="middle">2.31</text>
+        <text x="98"  y="29.5" text-anchor="middle">0.07</text>
+        <text x="126" y="29.5" text-anchor="middle">-1.8</text>
+        <text x="154" y="29.5" text-anchor="middle">0.55</text>
+        <text x="182" y="29.5" text-anchor="middle">1.49</text>
+        <text x="210" y="29.5" text-anchor="middle">-0.2</text>
+      </g>
+      <text x="234" y="29.5" text-anchor="middle" font-size="8" font-weight="700" fill="#1d8a8b">…</text>
+
+      <text x="14"  y="40" text-anchor="middle" font-size="9" font-weight="700" fill="#1d8a8b">⋮</text>
+      <text x="42"  y="40" text-anchor="middle" font-size="9" font-weight="700" fill="#1d8a8b">⋮</text>
+      <text x="70"  y="40" text-anchor="middle" font-size="9" font-weight="700" fill="#1d8a8b">⋮</text>
+      <text x="98"  y="40" text-anchor="middle" font-size="9" font-weight="700" fill="#1d8a8b">⋮</text>
+      <text x="126" y="40" text-anchor="middle" font-size="9" font-weight="700" fill="#1d8a8b">⋮</text>
+      <text x="154" y="40" text-anchor="middle" font-size="9" font-weight="700" fill="#1d8a8b">⋮</text>
+      <text x="182" y="40" text-anchor="middle" font-size="9" font-weight="700" fill="#1d8a8b">⋮</text>
+      <text x="210" y="40" text-anchor="middle" font-size="9" font-weight="700" fill="#1d8a8b">⋮</text>
+
+      <g fill="#28afb0" stroke="#1d8a8b" stroke-width="0.5">
+        <rect x="0"   y="44" width="28" height="7"/>
+        <rect x="28"  y="44" width="28" height="7"/>
+        <rect x="56"  y="44" width="28" height="7"/>
+        <rect x="84"  y="44" width="28" height="7"/>
+        <rect x="112" y="44" width="28" height="7"/>
+        <rect x="140" y="44" width="28" height="7"/>
+        <rect x="168" y="44" width="28" height="7"/>
+        <rect x="196" y="44" width="28" height="7"/>
+      </g>
+      <g fill="#37392e">
+        <text x="14"  y="49.5" text-anchor="middle">-0.7</text>
+        <text x="42"  y="49.5" text-anchor="middle">0.88</text>
+        <text x="70"  y="49.5" text-anchor="middle">1.23</text>
+        <text x="98"  y="49.5" text-anchor="middle">-0.6</text>
+        <text x="126" y="49.5" text-anchor="middle">0.14</text>
+        <text x="154" y="49.5" text-anchor="middle">-2.1</text>
+        <text x="182" y="49.5" text-anchor="middle">0.95</text>
+        <text x="210" y="49.5" text-anchor="middle">1.30</text>
+      </g>
+      <text x="234" y="49.5" text-anchor="middle" font-size="8" font-weight="700" fill="#1d8a8b">…</text>
+    </g>
+
+    <line x1="775" y1="765" x2="1009" y2="765" stroke="#1d8a8b" stroke-width="1"/>
+    <line x1="775" y1="762" x2="775" y2="768" stroke="#1d8a8b" stroke-width="1"/>
+    <line x1="1009" y1="762" x2="1009" y2="768" stroke="#1d8a8b" stroke-width="1"/>
+    <text x="892" y="780" text-anchor="middle" font-size="9" fill="#1d8a8b">4096 columnas (dimensión oculta)</text>
+
+    <text x="930" y="795" text-anchor="middle" font-size="12" font-weight="700" fill="#1d8a8b">forma: 32 × 4096  (tensor alto)</text>
+  </g>
+
+  <line x1="270" y1="806" x2="270" y2="833" stroke="#19647e" stroke-width="2" marker-end="url(#arrowA)"/>
+  <line x1="930" y1="806" x2="930" y2="833" stroke="#28afb0" stroke-width="2" marker-end="url(#arrowB)"/>
+
+  <!-- ====================== STEP 4 (was 3): KERNEL + REDUCTION ====================== -->
+  <g>
+    <rect x="60" y="841" width="1080" height="26" rx="6" fill="#ddcecd" stroke="#37392e" stroke-width="0.6"/>
+    <text x="80" y="859" font-size="12" font-weight="700" fill="#37392e">PASO ④</text>
+    <text x="600" y="859" text-anchor="middle" font-size="13" font-weight="600" fill="#37392e">cuBLAS elige un kernel distinto para cada forma — y cada kernel suma los valores en distinto orden</text>
+  </g>
+
+  <!-- ===== card a: chain reduction with traced partial sums ===== -->
+  <g>
+    <rect x="60" y="874" width="420" height="200" rx="10" fill="url(#cardA)" stroke="#19647e" stroke-width="1.5"/>
+
+    <!-- kernel name banner. -->
+    <rect x="100" y="884" width="340" height="30" rx="6" fill="#eee5e5" stroke="#19647e" stroke-width="1.5"/>
+    <text x="270" y="899" text-anchor="middle" font-size="12" font-weight="700" fill="#19647e">kernel: gemv_split_4</text>
+    <text x="270" y="910" text-anchor="middle" font-size="8" fill="#37392e" opacity="0.7">(suma secuencial, un valor a la vez)</text>
+
+    <!-- shared inputs label. -->
+    <text x="270" y="928" text-anchor="middle" font-size="9" font-weight="600" fill="#37392e">mismos 4 valores de entrada:</text>
+
+    <!-- input row centered: total width = 70+5+50+5+75+5+50 = 260, centered at 270 → starts at 140. -->
+    <g font-family="ui-monospace, monospace" font-size="9" transform="translate(140, 934)">
+      <rect x="0"   y="0" width="70" height="18" rx="2" fill="#ddcecd" stroke="#37392e" stroke-width="0.8"/>
+      <text x="35"  y="13" text-anchor="middle" fill="#37392e">100000000</text>
+      <rect x="75"  y="0" width="50" height="18" rx="2" fill="#ddcecd" stroke="#37392e" stroke-width="0.8"/>
+      <text x="100" y="13" text-anchor="middle" fill="#37392e">1.0</text>
+      <rect x="130" y="0" width="75" height="18" rx="2" fill="#ddcecd" stroke="#37392e" stroke-width="0.8"/>
+      <text x="167" y="13" text-anchor="middle" fill="#37392e">-100000000</text>
+      <rect x="210" y="0" width="50" height="18" rx="2" fill="#ddcecd" stroke="#37392e" stroke-width="0.8"/>
+      <text x="235" y="13" text-anchor="middle" fill="#37392e">1.0</text>
+    </g>
+
+    <!-- chain reduction visualization. centered: paso label + equation + box + comment ≈ 320px wide. -->
+    <g transform="translate(80, 974)" font-family="ui-monospace, monospace">
+      <!-- step 1. -->
+      <text x="0" y="9" font-size="9" font-weight="600" fill="#19647e">paso 1:</text>
+      <text x="42" y="9" font-size="9" fill="#37392e">100000000 + 1.0</text>
+      <text x="180" y="9" font-size="9" fill="#37392e">=</text>
+      <rect x="192" y="-2" width="80" height="14" rx="2" fill="#a8c5d0" stroke="#19647e"/>
+      <text x="232" y="9" text-anchor="middle" font-size="9" font-weight="700" fill="#19647e">100000000</text>
+      <text x="282" y="9" font-size="7" font-style="italic" fill="#37392e" opacity="0.7">(el 1.0 se pierde)</text>
+
+      <!-- step 2. -->
+      <text x="0" y="27" font-size="9" font-weight="600" fill="#19647e">paso 2:</text>
+      <text x="42" y="27" font-size="9" fill="#37392e">100000000 + (-100000000)</text>
+      <text x="180" y="27" font-size="9" fill="#37392e">=</text>
+      <rect x="192" y="16" width="80" height="14" rx="2" fill="#a8c5d0" stroke="#19647e"/>
+      <text x="232" y="27" text-anchor="middle" font-size="9" font-weight="700" fill="#19647e">0.0</text>
+      <text x="282" y="27" font-size="7" font-style="italic" fill="#37392e" opacity="0.7">(cancelación)</text>
+
+      <!-- step 3. -->
+      <text x="0" y="45" font-size="9" font-weight="600" fill="#19647e">paso 3:</text>
+      <text x="42" y="45" font-size="9" fill="#37392e">0.0 + 1.0</text>
+      <text x="180" y="45" font-size="9" fill="#37392e">=</text>
+      <rect x="192" y="34" width="80" height="14" rx="2" fill="#19647e" stroke="#0f4a60" stroke-width="1.2"/>
+      <text x="232" y="45" text-anchor="middle" font-size="10" font-weight="700" fill="#eee5e5">1.0</text>
+    </g>
+
+    <!-- final result banner. -->
+    <rect x="100" y="1040" width="340" height="26" rx="4" fill="#19647e" stroke="#0f4a60"/>
+    <text x="270" y="1057" text-anchor="middle" font-size="12" font-weight="700" fill="#eee5e5">suma final =  1.0</text>
+  </g>
+
+  <!-- ===== card b: pairwise tree reduction with traced partial sums ===== -->
+  <g>
+    <rect x="720" y="874" width="420" height="200" rx="10" fill="url(#cardB)" stroke="#28afb0" stroke-width="1.5"/>
+
+    <rect x="760" y="884" width="340" height="30" rx="6" fill="#eee5e5" stroke="#28afb0" stroke-width="1.5"/>
+    <text x="930" y="899" text-anchor="middle" font-size="12" font-weight="700" fill="#1d8a8b">kernel: gemm_tile_128x64</text>
+    <text x="930" y="910" text-anchor="middle" font-size="8" fill="#37392e" opacity="0.7">(suma por parejas en paralelo)</text>
+
+    <text x="930" y="928" text-anchor="middle" font-size="9" font-weight="600" fill="#37392e">mismos 4 valores de entrada:</text>
+
+    <!-- input row centered: starts at 720 + (420-260)/2 = 800. -->
+    <g font-family="ui-monospace, monospace" font-size="9" transform="translate(800, 934)">
+      <rect x="0"   y="0" width="70" height="18" rx="2" fill="#ddcecd" stroke="#37392e" stroke-width="0.8"/>
+      <text x="35"  y="13" text-anchor="middle" fill="#37392e">100000000</text>
+      <rect x="75"  y="0" width="50" height="18" rx="2" fill="#ddcecd" stroke="#37392e" stroke-width="0.8"/>
+      <text x="100" y="13" text-anchor="middle" fill="#37392e">1.0</text>
+      <rect x="130" y="0" width="75" height="18" rx="2" fill="#ddcecd" stroke="#37392e" stroke-width="0.8"/>
+      <text x="167" y="13" text-anchor="middle" fill="#37392e">-100000000</text>
+      <rect x="210" y="0" width="50" height="18" rx="2" fill="#ddcecd" stroke="#37392e" stroke-width="0.8"/>
+      <text x="235" y="13" text-anchor="middle" fill="#37392e">1.0</text>
+    </g>
+
+    <!-- pairwise tree visualization. centered at x=930, content ~320 wide → starts at 740. -->
+    <g transform="translate(740, 974)" font-family="ui-monospace, monospace">
+      <!-- step 1a. -->
+      <text x="0" y="9" font-size="9" font-weight="600" fill="#1d8a8b">paso 1a:</text>
+      <text x="46" y="9" font-size="9" fill="#37392e">100000000 + 1.0</text>
+      <text x="184" y="9" font-size="9" fill="#37392e">=</text>
+      <rect x="196" y="-2" width="80" height="14" rx="2" fill="#a8dcdd" stroke="#28afb0"/>
+      <text x="236" y="9" text-anchor="middle" font-size="9" font-weight="700" fill="#1d8a8b">100000000</text>
+      <text x="286" y="9" font-size="7" font-style="italic" fill="#37392e" opacity="0.7">(en paralelo)</text>
+
+      <!-- step 1b. -->
+      <text x="0" y="27" font-size="9" font-weight="600" fill="#1d8a8b">paso 1b:</text>
+      <text x="46" y="27" font-size="9" fill="#37392e">-100000000 + 1.0</text>
+      <text x="184" y="27" font-size="9" fill="#37392e">=</text>
+      <rect x="196" y="16" width="80" height="14" rx="2" fill="#a8dcdd" stroke="#28afb0"/>
+      <text x="236" y="27" text-anchor="middle" font-size="9" font-weight="700" fill="#1d8a8b">-100000000</text>
+      <text x="286" y="27" font-size="7" font-style="italic" fill="#37392e" opacity="0.7">(en paralelo)</text>
+
+      <!-- step 2. -->
+      <text x="0" y="45" font-size="9" font-weight="600" fill="#1d8a8b">paso 2:</text>
+      <text x="46" y="45" font-size="9" fill="#37392e">100000000 + (-100000000)</text>
+      <text x="184" y="45" font-size="9" fill="#37392e">=</text>
+      <rect x="196" y="34" width="80" height="14" rx="2" fill="#28afb0" stroke="#1d8a8b" stroke-width="1.2"/>
+      <text x="236" y="45" text-anchor="middle" font-size="10" font-weight="700" fill="#37392e">0.0</text>
+    </g>
+
+    <rect x="760" y="1040" width="340" height="26" rx="4" fill="#28afb0" stroke="#1d8a8b"/>
+    <text x="930" y="1057" text-anchor="middle" font-size="12" font-weight="700" fill="#37392e">suma final =  0.0</text>
+  </g>
+
+  <line x1="270" y1="1074" x2="270" y2="1131" stroke="#19647e" stroke-width="2" marker-end="url(#arrowA)"/>
+  <line x1="930" y1="1074" x2="930" y2="1131" stroke="#28afb0" stroke-width="2" marker-end="url(#arrowB)"/>
+
+  <!-- ====================== STEP 5: FLOATING-POINT DRIFT ACCUMULATES ====================== -->
+  <g>
+    <rect x="60" y="1109" width="1080" height="26" rx="6" fill="#ddcecd" stroke="#37392e" stroke-width="0.6"/>
+    <text x="80" y="1127" font-size="12" font-weight="700" fill="#37392e">PASO &#9315;</text>
+    <text x="600" y="1127" text-anchor="middle" font-size="13" font-weight="600" fill="#37392e">el ejemplo anterior se repite millones de veces &#8212; las diferencias se acumulan en el estado oculto</text>
+  </g>
+
+  <g>
+    <rect x="60" y="1142" width="420" height="110" rx="10" fill="url(#cardA)" stroke="#19647e" stroke-width="1.5"/>
+    <text x="270" y="1162" text-anchor="middle" font-size="10" fill="#37392e" opacity="0.75">tras 4096 sumas similares, el componente para "es":</text>
+
+    <!-- equation centered as full-width single line. -->
+    <text x="270" y="1183" text-anchor="middle" font-size="9" fill="#19647e" font-family="ui-monospace, monospace">resultado_1 + resultado_2 + &#8230; + resultado_4096</text>
+
+    <!-- equals symbol then result box, both centered below the equation. -->
+    <text x="201" y="1207" text-anchor="middle" font-size="11" font-weight="700" fill="#37392e">=</text>
+    <rect x="212" y="1190" width="130" height="26" rx="4" fill="#19647e" stroke="#0f4a60"/>
+    <text x="277" y="1210" text-anchor="middle" font-size="17" font-weight="700" fill="#eee5e5" font-family="ui-monospace, monospace">2.71828174</text>
+
+    <text x="270" y="1230" text-anchor="middle" font-size="9" fill="#37392e" opacity="0.75">(reducci&#243;n en cadena en cada paso)</text>
+    <text x="270" y="1245" text-anchor="middle" font-size="10" font-weight="600" fill="#19647e">&#8627; estado oculto para "es"</text>
+  </g>
+
+  <g>
+    <rect x="720" y="1142" width="420" height="110" rx="10" fill="url(#cardB)" stroke="#28afb0" stroke-width="1.5"/>
+    <text x="930" y="1162" text-anchor="middle" font-size="10" fill="#37392e" opacity="0.75">tras 4096 sumas similares, el componente para "es":</text>
+
+    <text x="930" y="1183" text-anchor="middle" font-size="9" fill="#1d8a8b" font-family="ui-monospace, monospace">resultado_1 + resultado_2 + &#8230; + resultado_4096</text>
+
+    <text x="861" y="1207" text-anchor="middle" font-size="11" font-weight="700" fill="#37392e">=</text>
+    <rect x="872" y="1190" width="130" height="26" rx="4" fill="#28afb0" stroke="#1d8a8b"/>
+    <text x="937" y="1210" text-anchor="middle" font-size="17" font-weight="700" fill="#37392e" font-family="ui-monospace, monospace">2.71828201</text>
+
+    <text x="930" y="1230" text-anchor="middle" font-size="9" fill="#37392e" opacity="0.75">(reducci&#243;n en &#225;rbol en cada paso)</text>
+    <text x="930" y="1245" text-anchor="middle" font-size="10" font-weight="600" fill="#1d8a8b">&#8627; difiere en el 7&#186; decimal</text>
+  </g>
+
+  <line x1="270" y1="1252" x2="270" y2="1279" stroke="#19647e" stroke-width="2" marker-end="url(#arrowA)"/>
+  <line x1="930" y1="1252" x2="930" y2="1279" stroke="#28afb0" stroke-width="2" marker-end="url(#arrowB)"/>
+
+  <!-- ====================== STEP 6: LOGITS ====================== -->
+  <g>
+    <rect x="60" y="1287" width="1080" height="26" rx="6" fill="#ddcecd" stroke="#37392e" stroke-width="0.6"/>
+    <text x="80" y="1305" font-size="12" font-weight="700" fill="#37392e">PASO &#9316;</text>
+    <text x="600" y="1305" text-anchor="middle" font-size="13" font-weight="600" fill="#37392e">peque&#241;a deriva en el estado oculto &#8594; los logits se desplazan &#8594; las probabilidades se cruzan</text>
+  </g>
+
+  <g>
+    <rect x="60" y="1320" width="420" height="118" rx="10" fill="url(#cardA)" stroke="#19647e" stroke-width="1.5"/>
+    <text x="270" y="1340" text-anchor="middle" font-size="10" fill="#37392e" opacity="0.7">tokens principales tras "La capital de Francia es":</text>
+    <g transform="translate(80, 1352)">
+      <!-- row 1: paris (winner). -->
+      <text x="0" y="10" font-size="10" font-weight="700" fill="#19647e">"Par&#237;s"</text>
+      <rect x="46" y="2" width="180" height="10" fill="#19647e" stroke="#0f4a60"/>
+      <text x="232" y="10" font-size="10" font-weight="700" fill="#19647e">0.5021 &#9668; ganador</text>
+
+      <!-- row 2: la. -->
+      <text x="0" y="25" font-size="10" fill="#37392e" opacity="0.85">"la"</text>
+      <rect x="46" y="17" width="178" height="10" fill="#a8c5d0" stroke="#19647e"/>
+      <text x="232" y="25" font-size="10" fill="#37392e" opacity="0.85">0.4979</text>
+
+      <!-- row 3: una. -->
+      <text x="0" y="40" font-size="10" fill="#37392e" opacity="0.85">"una"</text>
+      <rect x="46" y="32" width="3" height="10" fill="#a8c5d0" stroke="#19647e"/>
+      <text x="232" y="40" font-size="10" fill="#37392e" opacity="0.85">0.0001</text>
+    </g>
+    <text x="270" y="1425" text-anchor="middle" font-size="11" font-weight="700" fill="#19647e">"Par&#237;s" gana por 0.0042</text>
+  </g>
+
+  <g>
+    <rect x="720" y="1320" width="420" height="118" rx="10" fill="url(#cardB)" stroke="#28afb0" stroke-width="1.5"/>
+    <text x="930" y="1340" text-anchor="middle" font-size="10" fill="#37392e" opacity="0.7">tokens principales tras "La capital de Francia es":</text>
+    <g transform="translate(740, 1352)">
+      <!-- row 1: paris. -->
+      <text x="0" y="10" font-size="10" fill="#37392e" opacity="0.85">"Par&#237;s"</text>
+      <rect x="46" y="2" width="179" height="10" fill="#a8dcdd" stroke="#28afb0"/>
+      <text x="232" y="10" font-size="10" fill="#37392e" opacity="0.85">0.4998</text>
+
+      <!-- row 2: la (winner). -->
+      <text x="0" y="25" font-size="10" font-weight="700" fill="#1d8a8b">"la"</text>
+      <rect x="46" y="17" width="180" height="10" fill="#28afb0" stroke="#1d8a8b"/>
+      <text x="232" y="25" font-size="10" font-weight="700" fill="#1d8a8b">0.5001 &#9668; ganador</text>
+
+      <!-- row 3: una. -->
+      <text x="0" y="40" font-size="10" fill="#37392e" opacity="0.85">"una"</text>
+      <rect x="46" y="32" width="3" height="10" fill="#a8dcdd" stroke="#28afb0"/>
+      <text x="232" y="40" font-size="10" fill="#37392e" opacity="0.85">0.0001</text>
+    </g>
+    <text x="930" y="1425" text-anchor="middle" font-size="11" font-weight="700" fill="#1d8a8b">"la" gana por 0.0003</text>
+  </g>
+
+  <line x1="270" y1="1438" x2="270" y2="1465" stroke="#19647e" stroke-width="2" marker-end="url(#arrowA)"/>
+  <line x1="930" y1="1438" x2="930" y2="1465" stroke="#28afb0" stroke-width="2" marker-end="url(#arrowB)"/>
+
+  <!-- ====================== STEP 7: FINAL OUTPUT ====================== -->
+  <g>
+    <rect x="60" y="1473" width="1080" height="26" rx="6" fill="#ddcecd" stroke="#37392e" stroke-width="0.6"/>
+    <text x="80" y="1491" font-size="12" font-weight="700" fill="#37392e">PASO &#9317;</text>
+    <text x="600" y="1491" text-anchor="middle" font-size="13" font-weight="600" fill="#37392e">el argmax elige un token distinto &#8594; la respuesta diverge desde aqu&#237;</text>
+  </g>
+
+  <g>
+    <rect x="60" y="1508" width="420" height="48" rx="10" fill="#19647e" stroke="#0f4a60" stroke-width="2"/>
+    <text x="76" y="1527" font-size="9" font-weight="700" letter-spacing="1" fill="#ddcecd">SALIDA A</text>
+    <line x1="138" y1="1516" x2="138" y2="1548" stroke="#ddcecd" stroke-width="0.8" opacity="0.5"/>
+    <text x="312" y="1538" text-anchor="middle" font-size="14" font-weight="700" fill="#eee5e5" font-family="ui-monospace, monospace">"...es Par&#237;s."</text>
+  </g>
+
+  <g>
+    <rect x="720" y="1508" width="420" height="48" rx="10" fill="#28afb0" stroke="#1d8a8b" stroke-width="2"/>
+    <text x="736" y="1527" font-size="9" font-weight="700" letter-spacing="1" fill="#37392e">SALIDA B</text>
+    <line x1="798" y1="1516" x2="798" y2="1548" stroke="#37392e" stroke-width="0.8" opacity="0.4"/>
+    <text x="970" y="1532" text-anchor="middle" font-size="10" font-weight="700" fill="#37392e" font-family="ui-monospace, monospace">"...es la ciudad de Par&#237;s,</text>
+    <text x="970" y="1546" text-anchor="middle" font-size="10" font-weight="700" fill="#37392e" font-family="ui-monospace, monospace">ubicada a orillas del Sena."</text>
+  </g>
+</svg>
