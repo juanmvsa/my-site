@@ -29,7 +29,7 @@ Also, you can find my socials here:
 
 * [LinkedIn](http://www.linkedin.com/in/juanmvs)
 * [GitHub](https://github.com/juanmvsa)
-* [Google Scholar](https://scholar.google.com/citations?user=d5vqb6cAAAAJ&hl=en)
+* [Google Scholar](https://scholar.google.com/citations?user=IoQWQakAAAAJ&hl=en&authuser=1)
 
 
 ## Publications
