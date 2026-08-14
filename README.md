@@ -2,7 +2,7 @@
 
 Personal academic website built with a monospace design aesthetic, deployed by hand to Cloudflare Pages.
 
-**Live Site:** https://juan-vasquez.com (also at https://www.juan-vasquez.com)
+**Live Site:** https://juan-vasquez.com (`www` 301-redirects here)
 
 ## Project Structure
 
@@ -83,7 +83,7 @@ my_site/
 
    # Or serve with local server
    make serve
-   # Visit http://localhost:8000
+   # Visit http://127.0.0.1:8000
    ```
 
 4. **Clean build artifacts**
@@ -204,14 +204,14 @@ wrangler pages deployment list --project-name=my-site
 
 1. **Edit**: Modify `content/index.html`
 2. **Test**: `make clean && make && open build/index.html`
-3. **Commit**: `git add content/index.html && git commit -m "description"`
-4. **Deploy**: `git push origin main`
+3. **Deploy**: `make deploy`
+4. **Commit**: `git add content/index.html && git commit -m "description"`
 
 ### Updating Styles or Scripts
 
 1. Edit files in `assets/styles/` or `assets/scripts/`
 2. Test build: `make clean && make`
-3. Commit and push
+3. `make deploy`, then commit
 
 ### Troubleshooting
 
@@ -246,6 +246,22 @@ both are attached to the project as custom domains:
 The `pages.dev` hostname is `my-site-3rd`, not `my-site` — the shorter
 subdomain was already taken globally when the project was created. It is only
 the internal origin; visitors never see it.
+
+`https://juan-vasquez.com/` is the one canonical URL. Two things enforce it,
+and both must stay in place:
+
+- A **Redirect Rule** named "Redirect www to apex" in the zone's Rules →
+  Redirect Rules, matching the wildcard `https://www.*` and sending a **301**
+  to `https://${1}` with *Preserve query string* on. It lives in the Cloudflare
+  dashboard, not in this repo, so it is invisible here — check there first if
+  `www` ever stops redirecting. Note the dashboard warns that `www` "may not be
+  proxied" when saving this rule; that warning is wrong, and choosing "create a
+  new proxied DNS record" would add a second `www` record that collides with
+  the existing one.
+- A `<link rel="canonical">` in `content/index.html` pointing at the apex.
+  Cloudflare Pages `_redirects` **cannot** do this job — it matches on path
+  only, never on hostname, so a `www`-to-apex rule written there silently does
+  nothing while breaking any path it happens to match.
 
 Because the origin is Cloudflare itself, there is no origin certificate to
 provision and nothing for the zone's **Full (strict)** SSL mode to reject. Keep
