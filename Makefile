@@ -1,6 +1,6 @@
-.PHONY: all clean serve
+.PHONY: all clean serve deploy
 
-all: build/index.html build/styles build/scripts build/images build/files build/CNAME build/.nojekyll
+all: build/index.html build/404.html build/styles build/scripts build/images build/files
 
 clean:
 	rm -rf build/
@@ -11,6 +11,13 @@ build/index.html: content/index.html Makefile
 	sed 's|href="index.css"|href="styles/index.css"|g' | \
 	sed 's|src="translations.js"|src="scripts/translations.js"|g' | \
 	sed 's|src="index.js"|src="scripts/index.js"|g' > build/index.html
+
+# cloudflare pages serves this with a real 404 status for unmatched paths.
+# without it, pages falls back to index.html with a 200 (a soft 404).
+build/404.html: content/404.html Makefile
+	@mkdir -p build
+	sed 's|href="reset.css"|href="styles/reset.css"|g' content/404.html | \
+	sed 's|href="index.css"|href="styles/index.css"|g' > build/404.html
 
 build/styles: assets/styles/*.css
 	@mkdir -p build/styles
@@ -29,14 +36,10 @@ build/files: files/*
 	@mkdir -p build
 	cp -r files build/
 
-build/CNAME: CNAME
-	@mkdir -p build
-	cp CNAME build/
-
-build/.nojekyll:
-	@mkdir -p build
-	touch build/.nojekyll
-
 serve: all
-	@echo "Serving site at http://localhost:8000"
-	@cd build && python3 -m http.server 8000
+	@echo "Serving site at http://127.0.0.1:8000"
+	@cd build && uv run python -m http.server -b 127.0.0.1 8000
+
+# manual deploy — never run from CI. see README "Deployment".
+deploy: all
+	wrangler pages deploy

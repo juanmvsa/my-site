@@ -1,8 +1,8 @@
 # Juan Vásquez - Personal Website
 
-Personal academic website built with a monospace design aesthetic, featuring automatic deployment via GitHub Actions.
+Personal academic website built with a monospace design aesthetic, deployed by hand to Cloudflare Pages.
 
-**Live Site:** https://juan-vasquez.com (also available at https://juanmvsa.github.io/my-site)
+**Live Site:** https://juan-vasquez.com (also at https://www.juan-vasquez.com)
 
 ## Project Structure
 
@@ -38,13 +38,10 @@ my_site/
 │   ├── styles/          # Copied CSS
 │   ├── scripts/         # Copied JS
 │   ├── images/          # Copied images
-│   ├── files/           # Copied PDFs
-│   └── CNAME            # GitHub Pages domain
-│
-├── .github/workflows/
-│   └── deploy.yml       # GitHub Actions CI/CD
+│   └── files/           # Copied PDFs
 │
 ├── Makefile             # Build configuration
+├── wrangler.toml        # Cloudflare Pages project + output dir
 └── flake.nix           # Nix development environment
 ```
 
@@ -156,45 +153,49 @@ The Makefile orchestrates the build:
    - JavaScript files → `build/scripts/`
    - Images → `build/images/`
    - PDFs → `build/files/`
-   - CNAME → `build/CNAME`
 
 3. **Result**: Self-contained website in `build/` ready for deployment
 
 ## Deployment
 
-### Automatic Deployment (Recommended)
-
-The site automatically deploys to GitHub Pages when you push to `main`:
+The site is hosted on **Cloudflare Pages** (project `my-site`) and every deploy
+is run **by hand from a local checkout**. There is no CI: pushing to `main`
+publishes nothing, so a commit that is not followed by a deploy leaves the live
+site stale.
 
 ```bash
-# Make your changes
+# make your changes
 vim content/index.html
 
-# Build and test locally
+# build and check locally
 make clean && make
-open build/index.html
+make serve            # http://127.0.0.1:8000
 
-# Commit and push
+# publish (build/ is rebuilt first)
+make deploy
+
+# then commit — the repo is the source of truth, not the trigger
 git add content/index.html
 git commit -m "Update content"
 git push origin main
 ```
 
-The GitHub Actions workflow (`.github/workflows/deploy.yml`) will:
-1. Build the site using Make
-2. Deploy to GitHub Pages
-3. Update your live site at https://juan-vasquez.com
+`make deploy` runs `wrangler pages deploy`, which reads `wrangler.toml` for the
+project name and output directory. Routine deploys need no API token — the
+`wrangler login` OAuth session on the machine already carries `pages:write`.
 
-### Manual Deployment
+**Do not add a GitHub Actions workflow that deploys.** A workflow may build,
+lint, or test, but the deploy stays manual and the deploy credentials stay on
+the local machine rather than in repository secrets.
 
-If needed, you can build and deploy manually:
+### Verifying a deploy
 
 ```bash
-# Build locally
-make clean && make
+# should be 200, and Last-Modified should match the deploy you just ran
+curl -sI "https://juan-vasquez.com/?cb=$(date +%s)" | head -1
 
-# The build/ directory contains the complete site
-# Deploy build/ contents to your hosting service
+# list recent deployments
+wrangler pages deployment list --project-name=my-site
 ```
 
 ## Development Workflow
@@ -224,31 +225,63 @@ make clean && make
 ```
 
 **Site doesn't update after push:**
-- Check GitHub Actions: https://github.com/juanmvsa/my-site/actions
-- Verify Pages source is set to "GitHub Actions" in repository settings
+- Pushing does not deploy. Run `make deploy` — see [Deployment](#deployment).
+- Confirm the upload landed: `wrangler pages deployment list --project-name=my-site`
 
 **Assets not loading:**
 - Ensure paths in `content/index.html` are root-relative (e.g., `reset.css` not `styles/reset.css`)
 - The build process transforms these automatically
 
-## GitHub Pages Configuration
+## Domain and TLS
 
-**One-time setup:**
+`juan-vasquez.com` lives in the `juan-vasquez.com` zone on Cloudflare and is
+served by the Pages project. Both hostnames are **proxied** (orange cloud), and
+both are attached to the project as custom domains:
 
-1. Go to repository Settings → Pages
-2. Under "Build and deployment" → "Source"
-3. Select **"GitHub Actions"**
-4. Save
+| Type  | Name  | Content                 | Proxy    |
+| ----- | ----- | ----------------------- | -------- |
+| CNAME | `@`   | `my-site-3rd.pages.dev` | Proxied  |
+| CNAME | `www` | `my-site-3rd.pages.dev` | Proxied  |
 
-The workflow will now deploy automatically on every push to `main`.
+The `pages.dev` hostname is `my-site-3rd`, not `my-site` — the shorter
+subdomain was already taken globally when the project was created. It is only
+the internal origin; visitors never see it.
+
+Because the origin is Cloudflare itself, there is no origin certificate to
+provision and nothing for the zone's **Full (strict)** SSL mode to reject. Keep
+the records proxied: it is what keeps the apex in the zone's analytics, and it
+coexists with `demos.juan-vasquez.com` (a *different* proxied record pointing
+at Fly) without either interfering with the other.
+
+**Do not point this domain back at GitHub Pages.** That was the previous setup
+and it broke: GitHub issues its custom-domain certificate over an HTTP-01
+challenge that Cloudflare's proxy intercepts, so no certificate was ever
+issued, the origin presented only its `*.github.io` wildcard, and Full (strict)
+answered every HTTPS request with **526 (invalid SSL certificate)** while plain
+HTTP kept working — an outage that reads like a build failure but isn't.
+
+**Diagnosing a TLS or routing error:**
+
+```bash
+# should be 200, served by cloudflare, with no x-github-* headers
+curl -sSI https://juan-vasquez.com/ | head -1
+curl -sSI https://juan-vasquez.com/ | grep -iE '^(server|x-github)'
+
+# should be CN=juan-vasquez.com — a *.github.io subject means the DNS regressed
+echo | openssl s_client -connect juan-vasquez.com:443 \
+  -servername juan-vasquez.com 2>/dev/null | openssl x509 -noout -subject
+
+# both hostnames should resolve to Cloudflare IPs (104.21.x / 172.67.x)
+dig +short juan-vasquez.com A
+dig +short www.juan-vasquez.com A
+```
 
 ## Technology Stack
 
 - **HTML/CSS/JavaScript**: Core web technologies
 - **Make**: Build automation
 - **Nix**: Reproducible development environment
-- **GitHub Actions**: CI/CD pipeline
-- **GitHub Pages**: Static site hosting
+- **Cloudflare Pages**: Static site hosting, deployed manually with `wrangler`
 
 ## Design Philosophy
 
