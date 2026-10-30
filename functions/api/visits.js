@@ -1,12 +1,21 @@
 // post /api/visits: stores the views, exits and events sent by scripts/analytics.js in d1.
 // binding: VISITS, the d1 database my-site-visits (schema in db/visits.sql).
 // the ip is never stored: location comes from request.cf, and the anonymous visitor
-// is a daily salted hash whose salt is deleted the next day.
+// is a daily salted hash whose salt is deleted the next day. views without consent keep
+// only country, browser and device type, referrer host and on-page activity.
 const MAX_BODY = 8192;
+const MAX_VIEWS_PER_VISITOR = 500;
+const MAX_EVENTS_PER_VIEW = 50;
+const RETENTION_DAYS = 395;
 const VIEW_ID = /^[0-9a-f-]{16,40}$/;
 const VISITOR_ID = /^[0-9a-f-]{32,36}$/;
 const EVENT_NAME = /^[a-z_]{1,40}$/;
 const CONSENT = ["granted", "denied", "pending", "not_required"];
+// cleared when a visitor withdraws consent, so a stored view matches a view made without it.
+const DETAIL_COLUMNS = [
+  "referrer", "utm_source", "utm_medium", "utm_campaign", "region", "city", "continent", "timezone", "asn", "as_org",
+  "browser_version", "os", "user_agent", "language", "screen", "viewport", "theme",
+];
 const BOT = /bot|crawl|spider|slurp|headless|lighthouse|pagespeed|preview|facebookexternalhit|curl|wget|python|httpclient|monitor/i;
 
 function empty(status) {
@@ -38,14 +47,18 @@ function hostOf(address) {
   }
 }
 
-// the first view of a utc day creates that day's salt and deletes every older one.
+// the first view of a utc day creates that day's salt, deletes every older one
+// and removes the views and events past the retention period.
 async function saltOfDay(db, day) {
   const select = db.prepare("select value from salts where day = ?").bind(day);
   const row = await select.first();
   if (row) return row.value;
+  const cutoff = new Date(Date.now() - RETENTION_DAYS * 86400000).toISOString();
   await db.batch([
     db.prepare("insert or ignore into salts (day, value) values (?, ?)").bind(day, hex(crypto.getRandomValues(new Uint8Array(32)))),
     db.prepare("delete from salts where day < ?").bind(day),
+    db.prepare("delete from views where received < ?").bind(cutoff),
+    db.prepare("delete from events where received < ?").bind(cutoff),
   ]);
   return (await select.first()).value;
 }
@@ -57,7 +70,7 @@ async function dailyVisitor(db, ip, userAgent) {
   return hex(digest).slice(0, 16);
 }
 
-// a light user-agent read; the raw string is kept too for later review.
+// a light user-agent read; with consent the raw string is kept too for later review.
 function parseUserAgent(ua, touchPoints) {
   const browsers = [
     ["Edge", /Edg(?:A|iOS)?\/([\d.]+)/],
@@ -105,7 +118,12 @@ async function saveView(db, data, request) {
   const referrerHost = hostOf(referrer);
   // navigation inside the site is not an external referrer.
   const external = referrerHost && referrerHost !== new URL(request.url).host;
-  const visitorId = VISITOR_ID.test(String(data.visitor_id || "")) ? data.visitor_id : null;
+  const consent = CONSENT.includes(data.consent) ? data.consent : null;
+  // a missing or unknown consent value counts as no consent.
+  const detailed = consent === "granted" || consent === "not_required";
+  const detail = (value) => (detailed ? value : null);
+  const visitorId = detailed && VISITOR_ID.test(String(data.visitor_id || "")) ? data.visitor_id : null;
+  const visitor = await dailyVisitor(db, request.headers.get("CF-Connecting-IP"), ua);
 
   const columns = [
     "view_id", "received", "visitor", "visitor_id", "consent", "is_bot", "path", "title", "referrer", "referrer_host",
@@ -113,37 +131,40 @@ async function saveView(db, data, request) {
     "browser", "browser_version", "os", "device", "user_agent", "language", "screen", "viewport", "theme",
   ];
   await db.prepare(
-    `insert or ignore into views (${columns.join(", ")}) values (${columns.map(() => "?").join(", ")})`
+    `insert or ignore into views (${columns.join(", ")}) select ${columns.map(() => "?").join(", ")}` +
+    " where (select count(*) from views where visitor = ?) < ?"
   ).bind(
     data.view_id,
     new Date().toISOString(),
-    await dailyVisitor(db, request.headers.get("CF-Connecting-IP"), ua),
+    visitor,
     visitorId,
-    CONSENT.includes(data.consent) ? data.consent : null,
+    consent,
     BOT.test(ua) || Boolean(cf.botManagement && cf.botManagement.verifiedBot) ? 1 : 0,
     text(data.path, 300) || "/",
     text(data.title, 200),
-    external ? referrer : null,
+    external ? detail(referrer) : null,
     external ? referrerHost : null,
-    text(data.utm_source, 100),
-    text(data.utm_medium, 100),
-    text(data.utm_campaign, 100),
+    detail(text(data.utm_source, 100)),
+    detail(text(data.utm_medium, 100)),
+    detail(text(data.utm_campaign, 100)),
     text(cf.country, 8),
-    text(cf.region, 100),
-    text(cf.city, 100),
-    text(cf.continent, 8),
-    text(cf.timezone, 64),
-    integer(cf.asn, 0, 4294967295),
-    text(cf.asOrganization, 120),
+    detail(text(cf.region, 100)),
+    detail(text(cf.city, 100)),
+    detail(text(cf.continent, 8)),
+    detail(text(cf.timezone, 64)),
+    detail(integer(cf.asn, 0, 4294967295)),
+    detail(text(cf.asOrganization, 120)),
     parsed.browser,
-    parsed.version,
-    parsed.os,
+    detail(parsed.version),
+    detail(parsed.os),
     parsed.device,
-    text(ua, 400),
-    text(data.language, 35),
-    text(data.screen, 20),
-    text(data.viewport, 20),
-    text(data.theme, 10),
+    detail(text(ua, 400)),
+    detail(text(data.language, 35)),
+    detail(text(data.screen, 20)),
+    detail(text(data.viewport, 20)),
+    detail(text(data.theme, 10)),
+    visitor,
+    MAX_VIEWS_PER_VISITOR,
   ).run();
 }
 
@@ -169,6 +190,17 @@ async function saveIdentify(db, data) {
   return true;
 }
 
+// declining unlinks the id from every stored view and strips those views of their detail.
+async function saveRevoke(db, data) {
+  const visitorId = data.visitor_id || null;
+  if (visitorId && !VISITOR_ID.test(String(visitorId))) return false;
+  const cleared = ["visitor_id", ...DETAIL_COLUMNS].map((column) => `${column} = null`).join(", ");
+  await db.prepare(`update views set consent = 'denied', ${cleared} where view_id = ? or visitor_id = ?`)
+    .bind(data.view_id, visitorId)
+    .run();
+  return true;
+}
+
 async function saveEvent(db, data) {
   const name = String(data.name || "");
   if (!EVENT_NAME.test(name)) return false;
@@ -183,17 +215,22 @@ async function saveEvent(db, data) {
     }
     if (Object.keys(clean).length) detail = JSON.stringify(clean);
   }
-  await db.prepare("insert into events (view_id, received, name, data) values (?, ?, ?, ?)")
-    .bind(data.view_id, new Date().toISOString(), name, detail)
-    .run();
+  // events only attach to a stored view, and each view takes a limited number.
+  await db.prepare(
+    "insert into events (view_id, received, name, data) select ?, ?, ?, ?" +
+    " where exists (select 1 from views where view_id = ?) and (select count(*) from events where view_id = ?) < ?"
+  ).bind(data.view_id, new Date().toISOString(), name, detail, data.view_id, data.view_id, MAX_EVENTS_PER_VIEW).run();
   return true;
 }
 
 export async function onRequestPost({ request, env }) {
-  // only accept data sent from this site's own pages.
-  const origin = request.headers.get("Origin");
-  if (origin && hostOf(origin) !== new URL(request.url).host) return empty(403);
+  // only accept data sent from this site's own pages; browsers always set Origin on a post.
+  if (hostOf(request.headers.get("Origin")) !== new URL(request.url).host) return empty(403);
   if (!env.VISITS) return empty(204);
+
+  // beacons always declare their size, so the body is never read past the limit.
+  const declared = Number(request.headers.get("Content-Length"));
+  if (!declared || declared > MAX_BODY) return empty(413);
 
   let data;
   try {
@@ -210,6 +247,7 @@ export async function onRequestPost({ request, env }) {
     if (data.type === "view") await saveView(env.VISITS, data, request);
     else if (data.type === "exit") await saveExit(env.VISITS, data);
     else if (data.type === "identify") ok = await saveIdentify(env.VISITS, data);
+    else if (data.type === "revoke") ok = await saveRevoke(env.VISITS, data);
     else if (data.type === "event") ok = await saveEvent(env.VISITS, data);
     else ok = false;
     if (!ok) return empty(400);

@@ -3,10 +3,11 @@
 const RANGES = { 7: 7, 30: 30, 90: 90, all: null };
 const BREAKDOWN_LIMIT = 15;
 const RECENT_VISITS_LIMIT = 50;
+const RECENT_ACTIONS_LIMIT = 20;
 const SCROLL_DEPTHS = [25, 50, 75, 100];
 
-// every statement is a fixed string; the only interpolated value is a number from
-// RANGES or SCROLL_DEPTHS, so no request input reaches the sql.
+// every statement is a fixed string; the only interpolated values are numbers from
+// the constants above, so no request input reaches the sql.
 function buildQueries(days) {
   const since = days === null ? "" : ` and received >= strftime('%Y-%m-%dT%H:%M:%fZ', 'now', '-${days} days')`;
   const views = `is_bot = 0${since}`;
@@ -61,9 +62,10 @@ function buildQueries(days) {
     recent: `
       select v.received as started, v.country, v.city, coalesce(v.utm_source, v.referrer_host, '$direct') as source,
              v.device, v.browser, v.duration_ms, v.scroll, v.visitor_id is not null as identified,
-             (select json_group_array(e.name || '|' || coalesce(json_extract(e.data, '$.file'), json_extract(e.data, '$.label'),
-                                                                 json_extract(e.data, '$.language'), ''))
-              from events e where e.view_id = v.view_id) as actions
+             (select json_group_array(action) from (
+                select e.name || '|' || coalesce(json_extract(e.data, '$.file'), json_extract(e.data, '$.label'),
+                                                 json_extract(e.data, '$.language'), '') as action
+                from events e where e.view_id = v.view_id order by e.id limit ${RECENT_ACTIONS_LIMIT})) as actions
       from views v where ${joined}
       order by v.received desc limit ${RECENT_VISITS_LIMIT}`,
   };

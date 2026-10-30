@@ -205,6 +205,13 @@ events — `file_downloaded`, `outbound_link_clicked`, `language_toggled` — to
   banner asks first, and visitors who decline are still counted anonymously.
   `functions/geo.js` (served at `/geo`) decides this from Cloudflare's country
   lookup; the choice can be changed with the "cookie preferences" footer link.
+- **Without consent less is stored.** Undecided and declining visitors keep only
+  country, browser and device type, referrer host, the page and on-page activity:
+  no city, network, raw user agent, screen size or full referrer. Declining also
+  clears the id and those details from every view stored under it.
+- **Limits:** views and events are deleted after 395 days, by the first view of
+  each UTC day. The collector requires a same-site `Origin`, and caps each daily
+  visitor at 500 views and each view at 50 events.
 - **Not counted:** bots (flagged by user agent and stored with `is_bot = 1`),
   visitors with Do Not Track or Global Privacy Control, local `make serve`
   sessions (unless the URL has `?track-local`), and any browser that opened

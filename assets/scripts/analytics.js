@@ -289,6 +289,8 @@ function showConsentBanner() {
     close();
   });
   decline.addEventListener("click", () => {
+    // the server unlinks the id from what it stored, so it goes out before it is forgotten.
+    send({ type: "revoke", view_id: viewId, visitor_id: visitorId });
     storageSet(CONSENT_KEY, "denied");
     storageRemove(VISITOR_KEY);
     consent = "denied";
@@ -322,6 +324,27 @@ async function initAnalytics() {
   if (consent !== "not_required") whenReady(revealPreferencesLink);
   if (consent === "pending") whenReady(showConsentBanner);
 }
+
+// posthog left its cookies and storage in past visitors' browsers; this site no longer reads them.
+function removePosthogLeftovers() {
+  const domain = window.location.hostname.replace(/^www\./, "");
+  document.cookie.split(";").forEach((cookie) => {
+    const name = cookie.split("=")[0].trim();
+    if (!name.startsWith("ph_")) return;
+    const expired = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/; SameSite=Lax`;
+    document.cookie = expired;
+    document.cookie = `${expired}; domain=.${domain}`;
+  });
+  try {
+    [localStorage, sessionStorage].forEach((storage) => {
+      Object.keys(storage).filter((key) => key.startsWith("ph_")).forEach((key) => storage.removeItem(key));
+    });
+  } catch {
+    // storage blocked: nothing can be read or removed.
+  }
+}
+
+removePosthogLeftovers();
 
 if (trackingAllowed()) {
   initAnalytics();

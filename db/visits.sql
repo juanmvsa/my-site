@@ -42,6 +42,7 @@ create table if not exists views (
 
 create index if not exists views_received on views (received);
 create index if not exists views_visitor_id on views (visitor_id);
+create index if not exists views_visitor on views (visitor);
 
 -- actions inside a view: file downloads, outbound clicks, language switches.
 create table if not exists events (
