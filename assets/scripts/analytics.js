@@ -1,7 +1,9 @@
 // posthog analytics: pageviews, autocapture, and the custom events below.
 // the project key is public by design (it can only write events), so it lives here.
 const POSTHOG_KEY = "phc_pcyyHtMq9KfbHRPuBQMBs32WjupankRCf7MEfDLjRzdK";
-const POSTHOG_HOST = "https://eu.i.posthog.com";
+// requests go through functions/ingest on this domain, which forwards to posthog eu.
+const POSTHOG_HOST = "/ingest";
+const POSTHOG_UI_HOST = "https://eu.posthog.com";
 
 // visitors in the eu/eea/uk/ch must opt in before any cookie is set or event
 // is sent. everyone else is tracked with persistent cookies straight away.
@@ -72,6 +74,7 @@ function loadPosthog() {
 
   window.posthog.init(POSTHOG_KEY, {
     api_host: POSTHOG_HOST,
+    ui_host: POSTHOG_UI_HOST,
     // cookie + localStorage keeps one distinct id per visitor across visits.
     persistence: "localStorage+cookie",
     person_profiles: "identified_only",

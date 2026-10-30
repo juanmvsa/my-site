@@ -198,6 +198,11 @@ cloud) at the top of that file — `make deploy` refuses to run while the
 placeholder key is still there. Tracking is skipped on `localhost`/`127.0.0.1`
 and for visitors with Do Not Track enabled.
 
+The tracker talks only to this domain: `functions/ingest/[[path]].js` proxies
+`/ingest/static/*` to `eu-assets.i.posthog.com` and the rest of `/ingest/*` to
+`eu.i.posthog.com`, forwarding the visitor IP for geolocation and stripping
+cookies in both directions. This keeps ad blockers from dropping the script.
+
 Visitors are recognised across visits with a PostHog cookie. Visitors from the
 EU/EEA, UK and Switzerland see a consent banner first and nothing loads until
 they accept; the Pages Function `functions/geo.js` (served at `/geo`) decides
