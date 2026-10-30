@@ -117,7 +117,10 @@ export async function onRequestGet({ request, env }) {
     );
     body = { range: param, generated_at: new Date().toISOString(), ...Object.fromEntries(entries) };
   } catch (error) {
-    return Response.json({ error: error.message }, { status: 502 });
+    console.error("admin metrics:", error.message);
+    // 424, not 502: cloudflare swaps 5xx bodies for its own error page, which
+    // would hide this message from the dashboard.
+    return Response.json({ error: error.message }, { status: 424 });
   }
 
   await caches.default.put(
