@@ -188,6 +188,22 @@ project name and output directory. Routine deploys need no API token — the
 lint, or test, but the deploy stays manual and the deploy credentials stay on
 the local machine rather than in repository secrets.
 
+### Analytics
+
+Visits are tracked with PostHog via `assets/scripts/analytics.js` (loaded on
+`index.html` and `404.html`). Besides pageviews, autocapture and page-leave, it
+sends `file_downloaded`, `outbound_link_clicked`, `language_toggled` and
+`scroll_depth_reached` events. Set `POSTHOG_KEY` (and `POSTHOG_HOST` for the EU
+cloud) at the top of that file — `make deploy` refuses to run while the
+placeholder key is still there. Tracking is skipped on `localhost`/`127.0.0.1`
+and for visitors with Do Not Track enabled.
+
+Visitors are recognised across visits with a PostHog cookie. Visitors from the
+EU/EEA, UK and Switzerland see a consent banner first and nothing loads until
+they accept; the Pages Function `functions/geo.js` (served at `/geo`) decides
+this from Cloudflare's country lookup. Their choice is kept in `localStorage`
+and can be changed with the "cookie preferences" link in the footer.
+
 ### Verifying a deploy
 
 ```bash

@@ -137,6 +137,7 @@ window.translations = {
 
         // Footer
         forkText: "Este sitio es un fork de",
-        repo: "este"
+        repo: "este",
+        cookiePreferences: "preferencias de cookies"
     }
 };

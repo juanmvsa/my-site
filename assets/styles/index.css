@@ -792,3 +792,26 @@ dl dt {
     grid-row: 2;
   }
 }
+
+/* cookie consent banner, shown only to visitors who must opt in. */
+.consent-banner {
+  position: fixed;
+  left: 50%;
+  bottom: var(--line-height);
+  transform: translateX(-50%);
+  width: calc(min(80ch, 100% - 4ch));
+  padding: calc(var(--line-height) - var(--border-thickness)) calc(2ch - var(--border-thickness));
+  border: var(--border-thickness) solid var(--text-color);
+  background: var(--background-color);
+  color: var(--text-color);
+  z-index: 1000;
+}
+
+.consent-banner p {
+  margin: 0 0 var(--line-height) 0;
+}
+
+.consent-banner__actions {
+  display: flex;
+  gap: 2ch;
+}
