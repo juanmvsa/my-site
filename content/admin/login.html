@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Admin login</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🍉</text></svg>">
+  <link rel="stylesheet" href="/styles/reset.css" />
+  <link rel="stylesheet" href="/styles/index.css" />
+  <link rel="stylesheet" href="/styles/admin.css" />
+</head>
+<body class="admin admin--login" data-page="login">
+  <h1>visits · admin</h1>
+  <form class="admin-login" method="post" action="/admin/login">
+    <label for="password">password</label>
+    <input id="password" name="password" type="password" autocomplete="current-password" required autofocus />
+    <p id="login-error" class="admin-login__error" role="alert" hidden>wrong password.</p>
+    <button type="submit">log in</button>
+  </form>
+  <script src="/scripts/admin.js"></script>
+</body>
+</html>

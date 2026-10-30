@@ -1,6 +1,6 @@
 .PHONY: all clean serve deploy check-analytics
 
-all: build/index.html build/404.html build/styles build/scripts build/images build/files
+all: build/index.html build/404.html build/admin build/styles build/scripts build/images build/files
 
 clean:
 	rm -rf build/
@@ -20,6 +20,12 @@ build/404.html: content/404.html Makefile
 	sed 's|href="reset.css"|href="styles/reset.css"|g' content/404.html | \
 	sed 's|href="index.css"|href="styles/index.css"|g' | \
 	sed 's|src="analytics.js"|src="/scripts/analytics.js"|g' > build/404.html
+
+# admin pages use absolute asset paths, so they are copied as-is.
+# access control lives in functions/admin/_middleware.js, not here.
+build/admin: content/admin/*.html
+	@mkdir -p build/admin
+	cp content/admin/*.html build/admin/
 
 build/styles: assets/styles/*.css
 	@mkdir -p build/styles

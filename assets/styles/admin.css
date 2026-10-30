@@ -1,0 +1,291 @@
+/* admin dashboard. builds on index.css tokens so light and dark modes follow the site. */
+
+body.admin {
+  max-width: calc(min(120ch, round(down, 100%, 1ch)));
+}
+
+body.admin--login {
+  max-width: calc(min(40ch, round(down, 100%, 1ch)));
+}
+
+.admin h1 {
+  text-transform: none;
+}
+
+/* index.css spaces every sibling with `* + *`; grid and flex layouts use gap instead. */
+.admin-tiles > *,
+.admin-grid > *,
+.admin-tile > *,
+.admin-bar > *,
+.admin-header > *,
+.admin-ranges > *,
+.admin-login > *,
+.admin-tooltip > *,
+.admin-table__actions > * {
+  margin-top: 0;
+}
+
+/* login. */
+
+.admin-login {
+  display: flex;
+  flex-direction: column;
+  gap: var(--line-height);
+}
+
+.admin-login input {
+  width: 100%;
+}
+
+.admin-login__error {
+  margin: 0;
+  font-weight: var(--font-weight-bold);
+}
+
+/* header and range filter. */
+
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 2ch;
+  flex-wrap: wrap;
+}
+
+.admin-header h1 {
+  margin: 0;
+}
+
+.admin-ranges {
+  display: flex;
+  gap: 1ch;
+  flex-wrap: wrap;
+  margin: var(--line-height) 0;
+}
+
+.admin-ranges button[aria-pressed="true"] {
+  background: var(--text-color);
+  color: var(--background-color);
+}
+
+.admin-status {
+  color: var(--text-color-alt);
+}
+
+.admin-dashboard {
+  transition: opacity 120ms;
+}
+
+.admin-dashboard.is-loading {
+  opacity: 0.5;
+}
+
+/* stat tiles. */
+
+.admin-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(18ch, 1fr));
+  gap: var(--line-height) 2ch;
+  margin-bottom: calc(var(--line-height) * 2);
+}
+
+.admin-tile {
+  display: flex;
+  flex-direction: column;
+  border: var(--border-thickness) solid var(--text-color);
+  padding: calc(var(--line-height) / 2) 1ch;
+}
+
+.admin-tile__label {
+  color: var(--text-color-alt);
+}
+
+.admin-tile__value {
+  font-size: 1.6rem;
+  line-height: calc(var(--line-height) * 2);
+  font-weight: var(--font-weight-bold);
+}
+
+.admin-tile--hero {
+  grid-column: span 2;
+}
+
+.admin-tile--hero .admin-tile__value {
+  font-size: 3rem;
+  line-height: calc(var(--line-height) * 3);
+}
+
+/* panels. */
+
+.admin-group {
+  margin-top: calc(var(--line-height) * 2);
+}
+
+.admin-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 44ch), 1fr));
+  gap: var(--line-height) 3ch;
+}
+
+.admin-panel {
+  min-width: 0;
+}
+
+.admin-panel--wide {
+  margin-top: calc(var(--line-height) * 2);
+}
+
+.admin-panel h3 {
+  margin-top: 0;
+}
+
+.admin-empty {
+  color: var(--text-color-alt);
+}
+
+/* line chart: one series in the site ink, recessive hairline grid. */
+
+.admin-line {
+  width: 100%;
+}
+
+.admin-line__svg {
+  display: block;
+  outline: none;
+  touch-action: pan-y;
+}
+
+.admin-line__svg:focus-visible {
+  outline: var(--border-thickness) solid var(--text-color);
+}
+
+.admin-line__grid {
+  stroke: var(--background-color-alt);
+  stroke-width: 1;
+}
+
+.admin-line__tick,
+.admin-line__end {
+  fill: var(--text-color-alt);
+  font-size: 0.8rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.admin-line__end {
+  fill: var(--text-color);
+  font-weight: var(--font-weight-bold);
+}
+
+.admin-line__path {
+  fill: none;
+  stroke: var(--text-color);
+  stroke-width: 2;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.admin-line__area {
+  fill: var(--text-color);
+  opacity: 0.1;
+}
+
+.admin-line__dot {
+  fill: var(--text-color);
+  stroke: var(--background-color);
+  stroke-width: 2;
+}
+
+.admin-line__crosshair {
+  stroke: var(--text-color-alt);
+  stroke-width: 1;
+}
+
+/* ranked bars: label, bar, value at the tip. */
+
+.admin-bar {
+  display: grid;
+  grid-template-columns: minmax(0, 18ch) minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 1ch;
+  line-height: var(--line-height);
+}
+
+.admin-bar__label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.admin-bar__track {
+  display: block;
+  height: 12px;
+}
+
+.admin-bar__fill {
+  display: block;
+  height: 100%;
+  min-width: 2px;
+  background: var(--text-color);
+  border-radius: 0 4px 4px 0;
+}
+
+.admin-bar__value {
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* tables. */
+
+.admin-table-wrap {
+  overflow-x: auto;
+}
+
+.admin-table {
+  width: 100%;
+}
+
+.admin-table .num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.admin-table .nowrap {
+  white-space: nowrap;
+}
+
+.admin-table__actions span {
+  display: block;
+}
+
+/* tooltip: value leads, label follows. */
+
+.admin-tooltip {
+  position: fixed;
+  z-index: 1000;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  padding: calc(var(--line-height) / 2) 1ch;
+  border: var(--border-thickness) solid var(--text-color);
+  background: var(--background-color);
+  color: var(--text-color-alt);
+}
+
+.admin-tooltip[hidden] {
+  display: none;
+}
+
+.admin-tooltip strong {
+  color: var(--text-color);
+}
+
+@media screen and (max-width: 480px) {
+  .admin-tile--hero {
+    grid-column: auto;
+  }
+
+  .admin-bar {
+    grid-template-columns: minmax(0, 12ch) minmax(0, 1fr) auto;
+  }
+}

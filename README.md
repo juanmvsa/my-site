@@ -204,6 +204,25 @@ they accept; the Pages Function `functions/geo.js` (served at `/geo`) decides
 this from Cloudflare's country lookup. Their choice is kept in `localStorage`
 and can be changed with the "cookie preferences" link in the footer.
 
+### Admin dashboard
+
+`/admin` shows the visit metrics. It is a static page (`content/admin/`) behind
+`functions/admin/_middleware.js`, which redirects to `/admin/login` without a
+valid session. `functions/admin/api/metrics.js` queries PostHog server-side and
+caches each date range for 5 minutes. It needs four Pages secrets, set from
+this machine (never in the repo):
+
+```bash
+wrangler pages secret put ADMIN_PASSWORD --project-name my-site
+openssl rand -hex 32 | wrangler pages secret put SESSION_SECRET --project-name my-site
+wrangler pages secret put POSTHOG_PERSONAL_API_KEY --project-name my-site   # scope: query:read
+wrangler pages secret put POSTHOG_PROJECT_ID --project-name my-site         # optional
+```
+
+Changing `ADMIN_PASSWORD` or `SESSION_SECRET` signs every session out. For
+local testing, put the same keys in `.dev.vars` (gitignored) and run
+`wrangler pages dev build --ip 127.0.0.1`.
+
 ### Verifying a deploy
 
 ```bash
