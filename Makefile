@@ -1,4 +1,4 @@
-.PHONY: all clean serve deploy check-analytics
+.PHONY: all clean serve deploy
 
 all: build/index.html build/404.html build/admin build/styles build/scripts build/images build/files
 
@@ -49,11 +49,5 @@ serve: all
 	@cd build && uv run python -m http.server -b 127.0.0.1 8000
 
 # manual deploy — never run from CI. see README "Deployment".
-deploy: all check-analytics
+deploy: all
 	wrangler pages deploy
-
-# refuses to ship analytics.js with the placeholder posthog key.
-check-analytics: build/scripts
-	@if grep -q '^const POSTHOG_KEY = "phc_REPLACE_ME";' build/scripts/analytics.js; then \
-		echo "error: set POSTHOG_KEY in assets/scripts/analytics.js before deploying"; exit 1; \
-	fi

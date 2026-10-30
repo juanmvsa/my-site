@@ -1,2 +1,9 @@
 name = "my-site"
 pages_build_output_dir = "build"
+compatibility_date = "2026-03-01"
+
+# first-party visit analytics; schema in db/visits.sql.
+[[d1_databases]]
+binding = "VISITS"
+database_name = "my-site-visits"
+database_id = "fcc01e30-17e0-4f29-8500-b68e28b3e4b4"

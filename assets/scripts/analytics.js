@@ -1,52 +1,87 @@
-// posthog analytics: pageviews, autocapture, and the custom events below.
-// the project key is public by design (it can only write events), so it lives here.
-const POSTHOG_KEY = "phc_pcyyHtMq9KfbHRPuBQMBs32WjupankRCf7MEfDLjRzdK";
-// requests go through functions/ingest on this domain, which forwards to posthog eu.
-const POSTHOG_HOST = "/ingest";
-const POSTHOG_UI_HOST = "https://eu.posthog.com";
-
-// visitors in the eu/eea/uk/ch must opt in before any cookie is set or event
-// is sent. everyone else is tracked with persistent cookies straight away.
-const CONSENT_KEY = "analytics_consent";
+// first-party visit analytics: sends each view, its exit and a few actions to
+// functions/api/visits.js, which stores them in d1. no third party is involved.
+//
+// every visit is counted anonymously (the server keys it to a daily salted hash).
+// on top of that, a random id in localStorage recognises returning visitors:
+// set straight away outside the eu/eea/uk/ch, and only after consent inside them.
+//
+// to stop counting your own visits, open the site once with ?no-count
+// (and ?count to undo). opening /admin/ does the same automatically.
+const ENDPOINT = "/api/visits";
 const GEO_ENDPOINT = "/geo";
-
-const SCROLL_THRESHOLDS = [25, 50, 75, 100];
+const CONSENT_KEY = "analytics_consent";
+const VISITOR_KEY = "visitor_id";
+const NO_COUNT_KEY = "no_count";
 
 const CONSENT_TEXT = {
   en: {
-    message: "this site uses cookies to recognise returning visitors and see which papers get read.",
+    message: "visits are counted anonymously. may this site also store a random id to recognise you when you come back?",
     accept: "accept",
     decline: "decline",
   },
   es: {
-    message: "este sitio usa cookies para reconocer visitas recurrentes y ver qué artículos se leen.",
+    message: "las visitas se cuentan de forma anónima. ¿puede este sitio guardar además un id aleatorio para reconocerte cuando vuelvas?",
     accept: "aceptar",
     decline: "rechazar",
   },
 };
 
-function analyticsEnabled() {
-  if (POSTHOG_KEY === "phc_REPLACE_ME") return false;
-  // never record local `make serve` sessions.
-  const host = window.location.hostname;
-  return host !== "127.0.0.1" && host !== "localhost";
-}
-
-function readConsent() {
+function storageGet(key) {
   try {
-    return localStorage.getItem(CONSENT_KEY);
+    return localStorage.getItem(key);
   } catch {
     return null;
   }
 }
 
-function writeConsent(value) {
+function storageSet(key, value) {
   try {
-    localStorage.setItem(CONSENT_KEY, value);
+    localStorage.setItem(key, value);
   } catch {
-    // storage blocked: the choice only lasts for this page load.
+    // storage blocked: the value only lasts for this page load.
   }
 }
+
+function storageRemove(key) {
+  try {
+    localStorage.removeItem(key);
+  } catch {
+    // storage blocked: nothing was stored to remove.
+  }
+}
+
+function newId() {
+  if (window.crypto && crypto.randomUUID) return crypto.randomUUID();
+  const bytes = crypto.getRandomValues(new Uint8Array(16));
+  return Array.from(bytes, (b) => b.toString(16).padStart(2, "0")).join("");
+}
+
+function trackingAllowed() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.has("no-count")) storageSet(NO_COUNT_KEY, "1");
+  if (params.has("count")) storageRemove(NO_COUNT_KEY);
+  if (storageGet(NO_COUNT_KEY)) return false;
+
+  if (navigator.doNotTrack === "1" || navigator.globalPrivacyControl === true) return false;
+
+  // local `make serve` / `wrangler pages dev` sessions only count with ?track-local.
+  const host = window.location.hostname;
+  if ((host === "127.0.0.1" || host === "localhost") && !params.has("track-local")) return false;
+  return true;
+}
+
+// sendBeacon survives the tab closing; fetch with keepalive is the fallback.
+function send(body) {
+  const json = JSON.stringify(body);
+  try {
+    if (navigator.sendBeacon && navigator.sendBeacon(ENDPOINT, new Blob([json], { type: "application/json" }))) return;
+  } catch {
+    // fall through to fetch.
+  }
+  fetch(ENDPOINT, { method: "POST", body: json, headers: { "Content-Type": "application/json" }, keepalive: true }).catch(() => {});
+}
+
+// consent.
 
 async function consentRequired() {
   try {
@@ -60,59 +95,152 @@ async function consentRequired() {
   }
 }
 
+// one of: granted, denied (a stored choice), pending (must ask), not_required.
+async function resolveConsent() {
+  const stored = storageGet(CONSENT_KEY);
+  if (stored === "granted" || stored === "denied") return stored;
+  return (await consentRequired()) ? "pending" : "not_required";
+}
+
+function persistentVisitorId(consent) {
+  if (consent !== "granted" && consent !== "not_required") return null;
+  let id = storageGet(VISITOR_KEY);
+  if (!id) {
+    id = newId();
+    storageSet(VISITOR_KEY, id);
+  }
+  return id;
+}
+
+// view state.
+
+let viewId = newId();
+let visibleMs = 0;
+let visibleSince = document.visibilityState === "visible" ? performance.now() : null;
+let maxScroll = 0;
+let consent = "pending";
+let visitorId = null;
+
+function viewPayload() {
+  const params = new URLSearchParams(window.location.search);
+  return {
+    type: "view",
+    view_id: viewId,
+    visitor_id: visitorId,
+    consent: consent,
+    path: window.location.pathname,
+    title: document.title,
+    referrer: document.referrer,
+    utm_source: params.get("utm_source"),
+    utm_medium: params.get("utm_medium"),
+    utm_campaign: params.get("utm_campaign"),
+    language: navigator.language,
+    screen: `${screen.width}x${screen.height}`,
+    viewport: `${window.innerWidth}x${window.innerHeight}`,
+    touch_points: navigator.maxTouchPoints || 0,
+    theme: window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light",
+  };
+}
+
+// milliseconds until the page finished loading, if it has.
+function loadMs() {
+  const navigation = performance.getEntriesByType && performance.getEntriesByType("navigation")[0];
+  return navigation && navigation.loadEventEnd > 0 ? Math.round(navigation.loadEventEnd) : null;
+}
+
+// only time with the tab in view counts.
+function sendExit() {
+  if (visibleSince !== null) {
+    visibleMs += performance.now() - visibleSince;
+    visibleSince = null;
+  }
+  send({ type: "exit", view_id: viewId, duration_ms: Math.round(visibleMs), scroll: maxScroll, load_ms: loadMs() });
+}
+
+function measureScroll() {
+  const height = document.documentElement.scrollHeight;
+  if (!height) return;
+  const seen = Math.min(100, Math.round(((window.scrollY + window.innerHeight) / height) * 100));
+  if (seen > maxScroll) maxScroll = seen;
+}
+
+function track(name, data) {
+  send({ type: "event", view_id: viewId, name: name, data: data || null });
+}
+
+function trackClicks() {
+  // delegated at document level so it runs after the button's inline onclick,
+  // which means the language has already switched when we read it.
+  document.addEventListener("click", (event) => {
+    if (event.target.closest("#language-toggle")) {
+      track("language_toggled", { language: document.documentElement.lang });
+      return;
+    }
+
+    const link = event.target.closest("a[href]");
+    if (!link || link.id === "analytics-preferences") return;
+    const url = new URL(link.href, window.location.href);
+    const label = link.textContent.trim();
+
+    if (url.origin === window.location.origin && url.pathname.startsWith("/files/")) {
+      track("file_downloaded", { file: url.pathname.replace("/files/", ""), label: label });
+    } else if (url.origin !== window.location.origin) {
+      track("outbound_link_clicked", { url: url.origin + url.pathname, domain: url.hostname, label: label, section: sectionOf(link) });
+    }
+  });
+}
+
+// nearest preceding heading, so paper clicks can be grouped by section.
+function sectionOf(element) {
+  let node = element;
+  while (node && node !== document.body) {
+    let sibling = node.previousElementSibling;
+    while (sibling) {
+      if (/^H[1-6]$/.test(sibling.tagName)) return sibling.textContent.trim();
+      sibling = sibling.previousElementSibling;
+    }
+    node = node.parentElement;
+  }
+  return null;
+}
+
+function trackLifecycle() {
+  let scheduled = false;
+  window.addEventListener("scroll", () => {
+    if (scheduled) return;
+    scheduled = true;
+    requestAnimationFrame(() => {
+      scheduled = false;
+      measureScroll();
+    });
+  }, { passive: true });
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "hidden") sendExit();
+    else if (visibleSince === null) visibleSince = performance.now();
+  });
+  window.addEventListener("pagehide", sendExit);
+
+  // coming back through the back/forward cache is a new view.
+  window.addEventListener("pageshow", (event) => {
+    if (!event.persisted) return;
+    viewId = newId();
+    visibleMs = 0;
+    visibleSince = performance.now();
+    maxScroll = 0;
+    measureScroll();
+    send(viewPayload());
+  });
+}
+
+// banner.
+
 function whenReady(callback) {
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", callback);
   } else {
     callback();
   }
-}
-
-// official posthog loader stub: queues calls until array.js arrives.
-function loadPosthog() {
-  !function(t,e){var o,n,p,r;e.__SV||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init capture register register_once register_for_session unregister unregister_for_session getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSessionId getSurveys getActiveMatchingSurveys renderSurvey canRenderSurvey getNextSurveyStep identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty createPersonProfile opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing clear_opt_in_out_capturing debug".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
-
-  window.posthog.init(POSTHOG_KEY, {
-    api_host: POSTHOG_HOST,
-    ui_host: POSTHOG_UI_HOST,
-    // cookie + localStorage keeps one distinct id per visitor across visits.
-    persistence: "localStorage+cookie",
-    person_profiles: "identified_only",
-    respect_dnt: true,
-    capture_pageleave: true,
-  });
-}
-
-let trackingStarted = false;
-
-function startTracking() {
-  if (trackingStarted) return;
-  trackingStarted = true;
-  loadPosthog();
-  trackClicks();
-  trackScrollDepth();
-}
-
-// removes everything posthog stored, then reloads so no listener keeps sending.
-function stopTracking() {
-  const domains = ["", window.location.hostname, "." + window.location.hostname];
-  document.cookie.split(";").forEach((cookie) => {
-    const name = cookie.split("=")[0].trim();
-    if (!name.startsWith("ph_")) return;
-    domains.forEach((domain) => {
-      document.cookie =
-        name + "=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/" +
-        (domain ? "; domain=" + domain : "");
-    });
-  });
-  try {
-    Object.keys(localStorage)
-      .filter((key) => key.startsWith("ph_"))
-      .forEach((key) => localStorage.removeItem(key));
-  } catch {
-    // storage blocked: posthog could not have written there either.
-  }
-  window.location.reload();
 }
 
 function consentLanguage() {
@@ -125,7 +253,7 @@ function showConsentBanner() {
   const banner = document.createElement("div");
   banner.className = "consent-banner";
   banner.setAttribute("role", "dialog");
-  banner.setAttribute("aria-label", "cookie consent");
+  banner.setAttribute("aria-label", "analytics consent");
 
   const message = document.createElement("p");
   const accept = document.createElement("button");
@@ -154,22 +282,25 @@ function showConsentBanner() {
   }
 
   accept.addEventListener("click", () => {
-    writeConsent("granted");
+    storageSet(CONSENT_KEY, "granted");
+    consent = "granted";
+    visitorId = persistentVisitorId(consent);
+    send({ type: "identify", view_id: viewId, visitor_id: visitorId });
     close();
-    startTracking();
   });
   decline.addEventListener("click", () => {
-    const wasTracking = trackingStarted;
-    writeConsent("denied");
+    storageSet(CONSENT_KEY, "denied");
+    storageRemove(VISITOR_KEY);
+    consent = "denied";
+    visitorId = null;
     close();
-    if (wasTracking) stopTracking();
   });
 
   render();
   document.body.appendChild(banner);
 }
 
-// the footer link lets eu visitors change their mind later.
+// the footer link lets visitors in consent regions change their mind later.
 function revealPreferencesLink() {
   const link = document.getElementById("analytics-preferences");
   if (!link) return;
@@ -180,99 +311,18 @@ function revealPreferencesLink() {
   });
 }
 
-function trackClicks() {
-  // delegated at document level so it runs after the button's inline onclick,
-  // which means the language has already switched when we read it.
-  document.addEventListener("click", (event) => {
-    if (event.target.closest("#language-toggle")) {
-      window.posthog.capture("language_toggled", {
-        language: document.documentElement.lang,
-      });
-      return;
-    }
-
-    const link = event.target.closest("a[href]");
-    if (!link || link.id === "analytics-preferences") return;
-    const url = new URL(link.href, window.location.href);
-    const label = link.textContent.trim();
-
-    if (url.origin === window.location.origin && url.pathname.startsWith("/files/")) {
-      window.posthog.capture("file_downloaded", {
-        file: url.pathname.replace("/files/", ""),
-        label: label,
-      });
-    } else if (url.origin !== window.location.origin) {
-      // the page may unload on same-tab navigation, so send via beacon.
-      window.posthog.capture(
-        "outbound_link_clicked",
-        {
-          url: url.href,
-          domain: url.hostname,
-          label: label,
-          section: sectionOf(link),
-        },
-        { transport: "sendBeacon" }
-      );
-    }
-  });
-}
-
-// nearest preceding heading, so paper clicks can be grouped by section.
-function sectionOf(element) {
-  let node = element;
-  while (node && node !== document.body) {
-    let sibling = node.previousElementSibling;
-    while (sibling) {
-      if (/^H[1-6]$/.test(sibling.tagName)) return sibling.textContent.trim();
-      sibling = sibling.previousElementSibling;
-    }
-    node = node.parentElement;
-  }
-  return null;
-}
-
-function trackScrollDepth() {
-  const reached = new Set();
-
-  function check() {
-    const scrollable = document.documentElement.scrollHeight - window.innerHeight;
-    const percent = scrollable <= 0 ? 100 : (window.scrollY / scrollable) * 100;
-    SCROLL_THRESHOLDS.forEach((threshold) => {
-      if (percent >= threshold && !reached.has(threshold)) {
-        reached.add(threshold);
-        window.posthog.capture("scroll_depth_reached", { percent: threshold });
-      }
-    });
-    if (reached.size === SCROLL_THRESHOLDS.length) {
-      window.removeEventListener("scroll", check);
-    }
-  }
-
-  window.addEventListener("scroll", check, { passive: true });
-}
-
 async function initAnalytics() {
-  const stored = readConsent();
-  if (stored === "granted") {
-    startTracking();
-    whenReady(revealPreferencesLink);
-    return;
-  }
-  if (stored === "denied") {
-    whenReady(revealPreferencesLink);
-    return;
-  }
+  consent = await resolveConsent();
+  visitorId = persistentVisitorId(consent);
+  send(viewPayload());
+  measureScroll();
+  trackClicks();
+  trackLifecycle();
 
-  if (await consentRequired()) {
-    whenReady(() => {
-      revealPreferencesLink();
-      showConsentBanner();
-    });
-  } else {
-    startTracking();
-  }
+  if (consent !== "not_required") whenReady(revealPreferencesLink);
+  if (consent === "pending") whenReady(showConsentBanner);
 }
 
-if (analyticsEnabled()) {
+if (trackingAllowed()) {
   initAnalytics();
 }

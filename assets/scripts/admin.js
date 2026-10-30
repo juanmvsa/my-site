@@ -41,6 +41,24 @@ function cleanLabel(value) {
   return String(value);
 }
 
+// cloudflare reports iso country codes; show names, keeping the code if unknown.
+const regionNames = window.Intl && Intl.DisplayNames ? new Intl.DisplayNames(["en"], { type: "region" }) : null;
+
+function countryName(code) {
+  if (!code) return "unknown";
+  try {
+    return (regionNames && regionNames.of(code)) || code;
+  } catch {
+    return code;
+  }
+}
+
+function formatDuration(ms) {
+  if (ms === null || ms === undefined) return "—";
+  const seconds = Math.round(Number(ms) / 1000);
+  return seconds < 60 ? `${seconds}s` : `${Math.floor(seconds / 60)}m ${seconds % 60}s`;
+}
+
 // tooltip.
 
 const tooltip = document.getElementById("tooltip");
@@ -247,7 +265,7 @@ function describeAction(raw) {
 
 function renderRecent(table, rows) {
   const head = el("tr");
-  ["started", "country", "source", "device", "pages", "scroll", "actions"].forEach((h) => head.append(el("th", null, h)));
+  ["started", "location", "source", "device", "time", "scroll", "actions"].forEach((h) => head.append(el("th", null, h)));
   if (!rows.length) {
     const empty = el("tr");
     const cell = el("td", "admin-empty", "no visits yet");
@@ -264,13 +282,16 @@ function renderRecent(table, rows) {
     const actions = el("td", "admin-table__actions");
     (row.actions || []).forEach((action) => actions.append(el("span", null, describeAction(action))));
     if (!actions.childElementCount) actions.textContent = "—";
+    const location = [row.city, countryName(row.country)].filter(Boolean).join(", ");
+    // ↺ marks visitors with a persistent id, i.e. ones that can show up as returning.
+    const device = `${cleanLabel(row.device)} · ${cleanLabel(row.browser)}${row.identified ? " ↺" : ""}`;
     tr.append(
       el("td", "nowrap", started),
-      el("td", null, cleanLabel(row.country)),
+      el("td", null, location),
       el("td", null, cleanLabel(row.source)),
-      el("td", null, cleanLabel(row.device)),
-      el("td", "num", formatNumber(row.pageviews)),
-      el("td", "num", row.max_scroll ? `${Math.round(row.max_scroll)}%` : "—"),
+      el("td", "nowrap", device),
+      el("td", "num", formatDuration(row.duration_ms)),
+      el("td", "num", row.scroll ? `${row.scroll}%` : "—"),
       actions
     );
     return tr;
@@ -287,13 +308,13 @@ function render(data) {
   const returning = data.returning[0] || {};
   const events = data.events[0] || {};
   const visitors = Number(totals.visitors) || 0;
-  const sessions = Number(totals.sessions) || 0;
 
   document.getElementById("tile-visitors").textContent = formatNumber(visitors);
   document.getElementById("tile-pageviews").textContent = formatNumber(totals.pageviews);
-  document.getElementById("tile-sessions").textContent = formatNumber(sessions);
+  document.getElementById("tile-time").textContent = formatDuration(totals.avg_seconds === null ? null : totals.avg_seconds * 1000);
+  // returning is only knowable for visitors with a persistent id, so the share is of those.
   document.getElementById("tile-returning").textContent =
-    `${formatNumber(returning.returning)} · ${formatPercent(Number(returning.returning) || 0, Number(returning.visitors) || 0)}`;
+    `${formatNumber(returning.returning_visitors)} · ${formatPercent(Number(returning.returning_visitors) || 0, Number(returning.identified) || 0)}`;
   document.getElementById("tile-downloads").textContent = formatNumber(events.downloads);
   document.getElementById("tile-outbound").textContent = formatNumber(events.outbound_clicks);
 
@@ -301,7 +322,7 @@ function render(data) {
   renderLineChart(document.getElementById("daily-chart"), days);
   renderDailyTable(document.getElementById("daily-table"), days);
 
-  renderBars(document.getElementById("bars-countries"), breakdown(data.countries));
+  renderBars(document.getElementById("bars-countries"), breakdown(data.countries, countryName));
   renderBars(document.getElementById("bars-sources"), breakdown(data.sources));
   renderBars(document.getElementById("bars-devices"), breakdown(data.devices));
   renderBars(document.getElementById("bars-browsers"), breakdown(data.browsers));
@@ -313,18 +334,21 @@ function render(data) {
   );
 
   // scroll depth is ordered, so it keeps 25 → 100 order instead of ranking.
-  const scroll = data.scroll
-    .map((row) => ({ label: `${row.label}%`, value: Number(row.n) || 0, depth: Number(row.label) }))
-    .sort((a, b) => a.depth - b.depth);
+  const measured = Number((data.scroll[0] || {}).measured) || 0;
+  const scroll = measured
+    ? data.scroll
+        .map((row) => ({ label: `${row.label}%`, value: Number(row.n) || 0, depth: Number(row.label) }))
+        .sort((a, b) => a.depth - b.depth)
+    : [];
   renderBars(document.getElementById("bars-scroll"), scroll, {
-    format: (item) => `${formatPercent(item.value, sessions)} · ${formatNumber(item.value)}`,
+    format: (item) => `${formatPercent(item.value, measured)} · ${formatNumber(item.value)}`,
   });
 
   renderRecent(document.getElementById("recent-table"), data.recent);
 
   const first = totals.first_seen ? new Date(totals.first_seen).toLocaleDateString("en", { dateStyle: "medium" }) : "—";
   document.getElementById("generated").textContent =
-    `first visit in range: ${first} · data as of ${new Date(data.generated_at).toLocaleTimeString("en")} (refreshed every 5 minutes)`;
+    `first visit in range: ${first} · data as of ${new Date(data.generated_at).toLocaleTimeString("en")} · bots excluded`;
 }
 
 async function load(days) {
@@ -361,6 +385,14 @@ async function load(days) {
 }
 
 function initDashboard() {
+  // whoever opens the dashboard is the owner: stop counting this browser's visits.
+  // analytics.js reads this key; ?count on the public site undoes it.
+  try {
+    localStorage.setItem("no_count", "1");
+  } catch {
+    // storage blocked: visits from this browser keep being counted.
+  }
+
   const buttons = document.querySelectorAll(".admin-ranges button");
   buttons.forEach((button) => {
     button.addEventListener("click", () => {

@@ -190,43 +190,48 @@ the local machine rather than in repository secrets.
 
 ### Analytics
 
-Visits are tracked with PostHog via `assets/scripts/analytics.js` (loaded on
-`index.html` and `404.html`). Besides pageviews, autocapture and page-leave, it
-sends `file_downloaded`, `outbound_link_clicked`, `language_toggled` and
-`scroll_depth_reached` events. Set `POSTHOG_KEY` (and `POSTHOG_HOST` for the EU
-cloud) at the top of that file — `make deploy` refuses to run while the
-placeholder key is still there. Tracking is skipped on `localhost`/`127.0.0.1`
-and for visitors with Do Not Track enabled.
+Visit analytics are first-party: no third-party service is involved.
+`assets/scripts/analytics.js` (loaded on `index.html` and `404.html`) sends
+each page view, its exit (visible time, max scroll depth, load time) and three
+events — `file_downloaded`, `outbound_link_clicked`, `language_toggled` — to
+`functions/api/visits.js`, which stores them in the D1 database
+`my-site-visits` (binding `VISITS`, schema in `db/visits.sql`).
 
-The tracker talks only to this domain: `functions/ingest/[[path]].js` proxies
-`/ingest/static/*` to `eu-assets.i.posthog.com` and the rest of `/ingest/*` to
-`eu.i.posthog.com`, forwarding the visitor IP for geolocation and stripping
-cookies in both directions. This keeps ad blockers from dropping the script.
+- **Everyone is counted anonymously.** The server keys each visit to a daily
+  salted hash of IP + user agent. The salt is deleted the next day and the IP
+  is never stored, so these hashes cannot link days.
+- **Returning visitors** are recognised by a random id in `localStorage`. It is
+  set straight away outside the EU/EEA, UK and Switzerland; inside them a
+  banner asks first, and visitors who decline are still counted anonymously.
+  `functions/geo.js` (served at `/geo`) decides this from Cloudflare's country
+  lookup; the choice can be changed with the "cookie preferences" footer link.
+- **Not counted:** bots (flagged by user agent and stored with `is_bot = 1`),
+  visitors with Do Not Track or Global Privacy Control, local `make serve`
+  sessions (unless the URL has `?track-local`), and any browser that opened
+  `/admin/` or the site with `?no-count` (undo with `?count`).
 
-Visitors are recognised across visits with a PostHog cookie. Visitors from the
-EU/EEA, UK and Switzerland see a consent banner first and nothing loads until
-they accept; the Pages Function `functions/geo.js` (served at `/geo`) decides
-this from Cloudflare's country lookup. Their choice is kept in `localStorage`
-and can be changed with the "cookie preferences" link in the footer.
+Create the tables once per database:
+
+```bash
+CLOUDFLARE_ACCOUNT_ID=<account id> wrangler d1 execute my-site-visits --remote --file db/visits.sql
+wrangler d1 execute my-site-visits --local --file db/visits.sql   # for wrangler pages dev
+```
 
 ### Admin dashboard
 
 `/admin` shows the visit metrics. It is a static page (`content/admin/`) behind
 `functions/admin/_middleware.js`, which redirects to `/admin/login` without a
-valid session. `functions/admin/api/metrics.js` queries PostHog server-side and
-caches each date range for 5 minutes. It needs four Pages secrets, set from
-this machine (never in the repo):
+valid session. `functions/admin/api/metrics.js` reads the `VISITS` database
+directly. It needs two Pages secrets, set from this machine (never in the repo):
 
 ```bash
 wrangler pages secret put ADMIN_PASSWORD --project-name my-site
 openssl rand -hex 32 | wrangler pages secret put SESSION_SECRET --project-name my-site
-wrangler pages secret put POSTHOG_PERSONAL_API_KEY --project-name my-site   # scope: query:read
-wrangler pages secret put POSTHOG_PROJECT_ID --project-name my-site         # optional
 ```
 
 Changing `ADMIN_PASSWORD` or `SESSION_SECRET` signs every session out. For
-local testing, put the same keys in `.dev.vars` (gitignored) and run
-`wrangler pages dev build --ip 127.0.0.1`.
+local testing run `wrangler pages dev build --ip 127.0.0.1` (it uses the local
+D1 copy) with those two keys in `.dev.vars` (gitignored).
 
 ### Verifying a deploy
 
